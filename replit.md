@@ -1,6 +1,6 @@
-# [Project name]
+# Tehkal Hafsa Furniture
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A luxury multi-page marketing website for Tehkal Hafsa Furniture, a bespoke furniture workshop in Peshawar.
 
 ## Run & Operate
 
@@ -30,7 +30,7 @@ _Populate as you build — non-obvious choices a reader couldn't infer from the 
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+A single-artifact, frontend-only luxury site (`artifacts/tehkal-hafsa-furniture`, served at `/`) with pages for Home, About, Services, Products (catalog with category filter via `?category=` query param), Gallery, Projects, Why Choose Us, Testimonials, FAQ, Contact (client-side form), 404, Privacy Policy, and Terms & Conditions. No backend/database is used.
 
 ## User preferences
 
