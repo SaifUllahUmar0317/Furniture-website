@@ -23,8 +23,8 @@ export default function Gallery() {
       <div className="container mx-auto px-6 max-w-7xl">
         <FadeIn className="text-center mb-24">
           <span className="text-primary text-sm tracking-[0.3em] uppercase mb-4 block">Visual Showcase</span>
-          <h1 className="font-serif text-5xl md:text-7xl text-white mb-6">Gallery.</h1>
-          <p className="text-white/60 max-w-2xl mx-auto text-lg font-light">
+          <h1 className="font-serif text-5xl md:text-7xl text-foreground mb-6">Gallery.</h1>
+          <p className="text-foreground/60 max-w-2xl mx-auto text-lg font-light">
             A glimpse into our workshop's finest creations and meticulous details.
           </p>
         </FadeIn>
@@ -37,6 +37,7 @@ export default function Gallery() {
                 alt={`Gallery image ${i + 1}`} 
                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
               />
+              {/* Overlay sits on photo — keep dark for legibility */}
               <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500" />
             </StaggerItem>
           ))}

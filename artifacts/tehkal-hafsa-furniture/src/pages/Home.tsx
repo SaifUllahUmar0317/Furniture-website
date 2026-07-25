@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'wouter';
 import { FadeIn, StaggerContainer, StaggerItem } from '@/components/ui/fade-in';
-import { ArrowRight, Star, Quote } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import heroImg from '@assets/generated_images/hero.jpg';
 import aboutImg from '@assets/generated_images/about.jpg';
 import diningImg from '@assets/generated_images/dining.jpg';
@@ -30,12 +30,12 @@ export default function Home() {
             </span>
           </FadeIn>
           <FadeIn delay={0.4}>
-            <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl text-white leading-tight mb-8 max-w-5xl mx-auto">
-              Crafting Premium Furniture for <span className="italic text-white/90">Modern Living.</span>
+            <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl text-foreground leading-tight mb-8 max-w-5xl mx-auto">
+              Crafting Premium Furniture for <span className="italic text-foreground/90">Modern Living.</span>
             </h1>
           </FadeIn>
           <FadeIn delay={0.6}>
-            <p className="text-white/70 max-w-2xl mx-auto text-lg mb-12 font-light leading-relaxed">
+            <p className="text-foreground/70 max-w-2xl mx-auto text-lg mb-12 font-light leading-relaxed">
               Over a decade of excellence in bespoke woodworking and luxury interior solutions in Peshawar. We don't just build furniture; we curate lifestyles.
             </p>
           </FadeIn>
@@ -43,13 +43,13 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
               <Link
                 href="/products"
-                className="px-8 py-4 bg-primary text-primary-foreground uppercase tracking-widest text-sm font-medium hover:bg-white hover:text-black transition-colors duration-500"
+                className="px-8 py-4 bg-primary text-primary-foreground uppercase tracking-widest text-sm font-medium hover:bg-foreground hover:text-background transition-colors duration-500"
               >
                 Explore Collection
               </Link>
               <Link
                 href="/contact"
-                className="px-8 py-4 border border-white/20 text-white uppercase tracking-widest text-sm font-medium hover:border-primary hover:text-primary transition-colors duration-500"
+                className="px-8 py-4 border border-foreground/20 text-foreground uppercase tracking-widest text-sm font-medium hover:border-primary hover:text-primary transition-colors duration-500"
               >
                 Book Consultation
               </Link>
@@ -116,6 +116,7 @@ export default function Home() {
                     alt={category.title}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
+                  {/* Dark gradient overlay stays dark — it sits on top of a photo for legibility */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-100" />
                   <div className="absolute inset-0 p-8 flex flex-col justify-end">
                     <h3 className="font-serif text-2xl text-white mb-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">

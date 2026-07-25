@@ -32,8 +32,8 @@ export default function Services() {
       <div className="container mx-auto px-6 max-w-7xl">
         <FadeIn className="text-center mb-24">
           <span className="text-primary text-sm tracking-[0.3em] uppercase mb-4 block">Our Expertise</span>
-          <h1 className="font-serif text-5xl md:text-7xl text-white mb-6">Services.</h1>
-          <p className="text-white/60 max-w-2xl mx-auto text-lg font-light">Comprehensive interior and woodworking solutions for those who demand excellence.</p>
+          <h1 className="font-serif text-5xl md:text-7xl text-foreground mb-6">Services.</h1>
+          <p className="text-foreground/60 max-w-2xl mx-auto text-lg font-light">Comprehensive interior and woodworking solutions for those who demand excellence.</p>
         </FadeIn>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-32">
@@ -45,12 +45,12 @@ export default function Services() {
             <StaggerContainer className="grid gap-10">
               {services.map((service, i) => (
                 <StaggerItem key={i} className="flex gap-6 group">
-                  <div className="shrink-0 mt-1 p-4 bg-white/[0.02] border border-white/5 rounded-none group-hover:border-primary/50 transition-colors">
+                  <div className="shrink-0 mt-1 p-4 bg-foreground/[0.02] border border-foreground/5 rounded-none group-hover:border-primary/50 transition-colors">
                     {service.icon}
                   </div>
                   <div>
-                    <h3 className="font-serif text-2xl text-white mb-3 group-hover:text-primary transition-colors">{service.title}</h3>
-                    <p className="text-white/60 font-light leading-relaxed">
+                    <h3 className="font-serif text-2xl text-foreground mb-3 group-hover:text-primary transition-colors">{service.title}</h3>
+                    <p className="text-foreground/60 font-light leading-relaxed">
                       {service.description}
                     </p>
                   </div>

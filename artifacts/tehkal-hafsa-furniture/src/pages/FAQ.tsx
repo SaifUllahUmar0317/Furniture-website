@@ -37,21 +37,21 @@ export default function FAQ() {
       <div className="container mx-auto px-6 max-w-4xl">
         <FadeIn className="text-center mb-20">
           <span className="text-primary text-sm tracking-[0.3em] uppercase mb-4 block">Information</span>
-          <h1 className="font-serif text-5xl md:text-7xl text-white mb-6">FAQ.</h1>
+          <h1 className="font-serif text-5xl md:text-7xl text-foreground mb-6">FAQ.</h1>
         </FadeIn>
 
         <StaggerContainer className="space-y-4">
           {FAQS.map((faq, i) => (
             <StaggerItem key={i}>
-              <div className="border border-white/10 bg-white/[0.02]">
+              <div className="border border-foreground/10 bg-foreground/[0.02]">
                 <button
                   className="w-full text-left p-6 md:p-8 flex items-center justify-between focus:outline-none"
                   onClick={() => setOpenIndex(openIndex === i ? null : i)}
                 >
-                  <h3 className={`font-serif text-xl md:text-2xl transition-colors ${openIndex === i ? 'text-primary' : 'text-white'}`}>
+                  <h3 className={`font-serif text-xl md:text-2xl transition-colors ${openIndex === i ? 'text-primary' : 'text-foreground'}`}>
                     {faq.q}
                   </h3>
-                  <div className="ml-6 shrink-0 text-white/50">
+                  <div className="ml-6 shrink-0 text-foreground/50">
                     {openIndex === i ? <Minus className="w-6 h-6" /> : <Plus className="w-6 h-6" />}
                   </div>
                 </button>
@@ -60,7 +60,7 @@ export default function FAQ() {
                     openIndex === i ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                   }`}
                 >
-                  <p className="px-6 md:px-8 pb-8 text-white/60 font-light leading-relaxed">
+                  <p className="px-6 md:px-8 pb-8 text-foreground/60 font-light leading-relaxed">
                     {faq.a}
                   </p>
                 </div>

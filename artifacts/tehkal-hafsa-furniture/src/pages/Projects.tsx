@@ -36,7 +36,7 @@ export default function Projects() {
       <div className="container mx-auto px-6 max-w-7xl">
         <FadeIn className="text-center mb-24">
           <span className="text-primary text-sm tracking-[0.3em] uppercase mb-4 block">Case Studies</span>
-          <h1 className="font-serif text-5xl md:text-7xl text-white mb-6">Our Projects.</h1>
+          <h1 className="font-serif text-5xl md:text-7xl text-foreground mb-6">Our Projects.</h1>
         </FadeIn>
 
         <StaggerContainer className="space-y-32">
@@ -49,17 +49,17 @@ export default function Projects() {
                     alt={project.title} 
                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 border border-white/10 m-4 pointer-events-none" />
+                  <div className="absolute inset-0 border border-foreground/10 m-4 pointer-events-none" />
                 </div>
               </div>
               <div className="w-full lg:w-2/5 space-y-6">
                 <span className="text-primary text-xs uppercase tracking-widest">{project.type}</span>
-                <h2 className="font-serif text-3xl md:text-4xl text-white">{project.title}</h2>
-                <p className="text-white/60 font-light leading-relaxed text-lg">
+                <h2 className="font-serif text-3xl md:text-4xl text-foreground">{project.title}</h2>
+                <p className="text-foreground/60 font-light leading-relaxed text-lg">
                   {project.desc}
                 </p>
                 <div className="pt-6">
-                  <Link href="/contact" className="inline-block border-b border-primary text-primary pb-1 uppercase tracking-widest text-sm hover:text-white hover:border-white transition-colors">
+                  <Link href="/contact" className="inline-block border-b border-primary text-primary pb-1 uppercase tracking-widest text-sm hover:text-foreground hover:border-foreground transition-colors">
                     Inquire About Similar Project
                   </Link>
                 </div>

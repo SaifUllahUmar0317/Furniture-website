@@ -6,11 +6,11 @@ export default function Privacy() {
     <div className="w-full pt-32 pb-20 min-h-screen bg-background">
       <div className="container mx-auto px-6 max-w-3xl">
         <FadeIn className="mb-16 text-center">
-          <h1 className="font-serif text-4xl md:text-5xl text-white mb-6">Privacy Policy</h1>
-          <p className="text-white/50 text-sm tracking-widest uppercase">Last Updated: October 2023</p>
+          <h1 className="font-serif text-4xl md:text-5xl text-foreground mb-6">Privacy Policy</h1>
+          <p className="text-foreground/50 text-sm tracking-widest uppercase">Last Updated: October 2023</p>
         </FadeIn>
 
-        <FadeIn delay={0.2} className="prose prose-invert prose-p:text-white/70 prose-headings:text-white prose-headings:font-serif prose-a:text-primary max-w-none">
+        <FadeIn delay={0.2} className="prose prose-p:text-foreground/70 prose-headings:text-foreground prose-headings:font-serif prose-a:text-primary dark:prose-invert max-w-none">
           <p>
             At Tehkal Hafsa Furniture, accessible from our showroom and website, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by Tehkal Hafsa Furniture and how we use it.
           </p>

@@ -32,7 +32,7 @@ export default function WhyUs() {
       <div className="container mx-auto px-6 max-w-7xl">
         <FadeIn className="text-center mb-24">
           <span className="text-primary text-sm tracking-[0.3em] uppercase mb-4 block">The Tehkal Hafsa Difference</span>
-          <h1 className="font-serif text-5xl md:text-7xl text-white mb-6">Why Choose Us.</h1>
+          <h1 className="font-serif text-5xl md:text-7xl text-foreground mb-6">Why Choose Us.</h1>
         </FadeIn>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
@@ -40,13 +40,13 @@ export default function WhyUs() {
             {reasons.map((reason, i) => (
               <StaggerItem key={i} className="flex gap-6">
                 <div className="shrink-0 mt-2">
-                  <div className="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02]">
+                  <div className="w-16 h-16 rounded-full border border-foreground/10 flex items-center justify-center bg-foreground/[0.02]">
                     {reason.icon}
                   </div>
                 </div>
                 <div>
-                  <h3 className="font-serif text-2xl text-white mb-3">{reason.title}</h3>
-                  <p className="text-white/60 font-light leading-relaxed">
+                  <h3 className="font-serif text-2xl text-foreground mb-3">{reason.title}</h3>
+                  <p className="text-foreground/60 font-light leading-relaxed">
                     {reason.desc}
                   </p>
                 </div>
