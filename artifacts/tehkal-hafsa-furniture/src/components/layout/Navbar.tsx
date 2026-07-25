@@ -56,7 +56,7 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className={`text-sm tracking-widest uppercase transition-all duration-300 hover:text-primary ${
+              className={`text-sm tracking-widest uppercase transition-all duration-300 hover:text-primary [text-shadow:0_1px_6px_rgba(0,0,0,0.4)] ${
                 location === link.href ? 'text-primary' : 'text-foreground/70'
               }`}
             >
@@ -72,7 +72,7 @@ export function Navbar() {
           </button>
           <Link
             href="/contact"
-            className="ml-4 px-6 py-2.5 border border-primary/50 text-primary uppercase tracking-widest text-xs hover:bg-primary hover:text-primary-foreground transition-all duration-500"
+            className="ml-4 px-6 py-2.5 border border-primary text-primary uppercase tracking-widest text-xs hover:bg-primary hover:text-primary-foreground transition-all duration-500 [text-shadow:0_1px_6px_rgba(0,0,0,0.4)]"
           >
             Contact Us
           </Link>
