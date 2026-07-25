@@ -45,7 +45,7 @@ export function Navbar() {
           <span className="font-serif text-2xl tracking-widest uppercase text-foreground group-hover:text-primary transition-colors duration-500">
             Tehkal Hafsa
           </span>
-          <span className="font-sans text-[0.65rem] tracking-[0.3em] text-primary/80 uppercase">
+          <span className="font-sans text-[0.65rem] tracking-[0.3em] text-primary uppercase [text-shadow:0_1px_6px_rgba(0,0,0,0.5)]">
             Furniture
           </span>
         </Link>

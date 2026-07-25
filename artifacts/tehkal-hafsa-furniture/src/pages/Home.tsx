@@ -25,7 +25,7 @@ export default function Home() {
 
         <div className="container mx-auto px-6 relative z-10 text-center mt-20">
           <FadeIn delay={0.2}>
-            <span className="font-sans text-xs md:text-sm tracking-[0.4em] uppercase text-primary mb-6 block">
+            <span className="font-sans text-xs md:text-sm tracking-[0.4em] uppercase text-primary mb-6 block [text-shadow:0_1px_8px_rgba(0,0,0,0.6)]">
               Welcome to Tehkal Hafsa
             </span>
           </FadeIn>
