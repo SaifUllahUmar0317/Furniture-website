@@ -1,0 +1,1 @@
+- [Hero theme and image treatment](hero-theme.md) — Keep the home hero visibly photographic, with overlay and text colors that adapt to the active theme.
