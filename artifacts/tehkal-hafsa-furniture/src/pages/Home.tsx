@@ -19,8 +19,8 @@ export default function Home() {
             alt="Luxury Furniture Interior"
             className="w-full h-full object-cover scale-105 animate-in slide-in-from-bottom-2 duration-[2000ms]"
           />
-          <div className="absolute inset-0 bg-background/70 backdrop-blur-[2px]" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
+          <div className="absolute inset-0 bg-[#070a12]/65 backdrop-blur-[2px] dark:bg-background/70" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#070a12] via-[#070a12]/25 to-transparent dark:from-background dark:via-background/20" />
         </div>
 
         <div className="container mx-auto px-6 relative z-10 text-center mt-20">
@@ -30,12 +30,12 @@ export default function Home() {
             </span>
           </FadeIn>
           <FadeIn delay={0.4}>
-            <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl text-foreground leading-tight mb-8 max-w-5xl mx-auto">
-              Crafting Premium Furniture for <span className="italic text-foreground/90">Modern Living.</span>
+            <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl text-white leading-tight mb-8 max-w-5xl mx-auto dark:text-foreground">
+              Crafting Premium Furniture for <span className="italic text-white/90 dark:text-foreground/90">Modern Living.</span>
             </h1>
           </FadeIn>
           <FadeIn delay={0.6}>
-            <p className="text-foreground/70 max-w-2xl mx-auto text-lg mb-12 font-light leading-relaxed">
+            <p className="text-white/75 max-w-2xl mx-auto text-lg mb-12 font-light leading-relaxed dark:text-foreground/70">
               Over a decade of excellence in bespoke woodworking and luxury interior solutions in Peshawar. We don't just build furniture; we curate lifestyles.
             </p>
           </FadeIn>
@@ -49,7 +49,7 @@ export default function Home() {
               </Link>
               <Link
                 href="/contact"
-                className="px-8 py-4 border border-foreground/20 text-foreground uppercase tracking-widest text-sm font-medium hover:border-primary hover:text-primary transition-colors duration-500"
+                className="px-8 py-4 border border-white/40 text-white uppercase tracking-widest text-sm font-medium hover:border-primary hover:text-primary transition-colors duration-500 dark:border-foreground/20 dark:text-foreground"
               >
                 Book Consultation
               </Link>

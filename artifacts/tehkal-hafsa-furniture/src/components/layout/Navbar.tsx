@@ -20,6 +20,7 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
+  const isLightHero = theme === 'light' && location === '/' && !isScrolled;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -42,7 +43,7 @@ export function Navbar() {
     >
       <div className="container mx-auto px-6 max-w-7xl flex items-center justify-between">
         <Link href="/" className="flex flex-col items-start z-50 group">
-          <span className="font-serif text-2xl tracking-widest uppercase text-foreground group-hover:text-primary transition-colors duration-500">
+          <span className={`font-serif text-2xl tracking-widest uppercase transition-colors duration-500 group-hover:text-primary ${isLightHero ? 'text-white' : 'text-foreground'}`}>
             Tehkal Hafsa
           </span>
           <span className="font-sans text-[0.65rem] tracking-[0.3em] text-primary uppercase [text-shadow:0_1px_6px_rgba(0,0,0,0.5)]">
@@ -57,7 +58,7 @@ export function Navbar() {
               key={link.href}
               href={link.href}
               className={`text-sm tracking-widest uppercase transition-all duration-300 hover:text-primary [text-shadow:0_1px_6px_rgba(0,0,0,0.4)] ${
-                location === link.href ? 'text-primary' : 'text-foreground/70'
+                location === link.href ? 'text-primary' : isLightHero ? 'text-white/80' : 'text-foreground/70'
               }`}
             >
               {link.label}
@@ -65,7 +66,7 @@ export function Navbar() {
           ))}
           <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="ml-4 p-2 text-foreground/70 hover:text-primary transition-colors focus:outline-none"
+            className={`ml-4 p-2 transition-colors focus:outline-none hover:text-primary ${isLightHero ? 'text-white/80' : 'text-foreground/70'}`}
             aria-label="Toggle Theme"
           >
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
@@ -82,13 +83,13 @@ export function Navbar() {
         <div className="flex items-center space-x-4 lg:hidden z-50">
           <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="text-foreground/70 hover:text-primary transition-colors focus:outline-none"
+            className={`transition-colors focus:outline-none hover:text-primary ${isLightHero ? 'text-white/80' : 'text-foreground/70'}`}
             aria-label="Toggle Theme"
           >
             {theme === 'dark' ? <Sun size={24} /> : <Moon size={24} />}
           </button>
           <button
-            className="text-foreground hover:text-primary transition-colors"
+            className={`transition-colors hover:text-primary ${isLightHero ? 'text-white' : 'text-foreground'}`}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle Menu"
           >
