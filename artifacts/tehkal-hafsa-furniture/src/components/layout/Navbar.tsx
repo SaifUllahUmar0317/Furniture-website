@@ -58,7 +58,7 @@ export function Navbar() {
               key={link.href}
               href={link.href}
               className={`text-sm tracking-widest uppercase transition-all duration-300 hover:text-primary [text-shadow:0_1px_6px_rgba(0,0,0,0.4)] ${
-                location === link.href
+                location === link.href || (link.href === '/products' && location.startsWith('/products/'))
                   ? isTransparentHero && theme === 'light' ? 'text-[#80651b]' : 'text-primary'
                   : 'text-foreground/70'
               }`}
