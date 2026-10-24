@@ -133,7 +133,13 @@ export default function ProductDetail() {
                 <img src={item.image} alt="" className="h-20 w-24 object-cover" loading="lazy" />
                 <span>
                   <span className="block font-serif text-lg text-foreground transition-colors group-hover:text-primary">{item.name}</span>
-                  <span className="mt-1 block text-sm text-muted-foreground">{formatPrice(item.price)}</span>
+                  <span className="mt-1 block text-xs text-muted-foreground">
+                    Sample {item.priceQualifier === 'starting' ? 'starting price' : 'price'}
+                  </span>
+                  <span className="block text-sm text-muted-foreground">
+                    {item.priceQualifier === 'starting' ? 'From ' : ''}
+                    {formatPrice(item.price)}
+                  </span>
                 </span>
               </Link>
             ))}
