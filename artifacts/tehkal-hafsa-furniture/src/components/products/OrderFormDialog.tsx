@@ -15,29 +15,70 @@ type OrderFormDialogProps = {
 };
 
 export function OrderFormDialog({ product, open, onOpenChange }: OrderFormDialogProps) {
-  const [submitted, setSubmitted] = useState(false);
+  const [submissionState, setSubmissionState] = useState<
+    'idle' | 'submitting' | 'success' | 'error'
+  >('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    if (!open) setSubmitted(false);
+    setSubmissionState('idle');
+    setErrorMessage('');
   }, [open, product?.slug]);
 
   if (!product) return null;
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSubmitted(true);
+    if (submissionState === 'submitting') return;
+
+    const formId = import.meta.env.VITE_FORMSPREE_FORM_ID;
+    if (!formId) {
+      setSubmissionState('error');
+      setErrorMessage(
+        'The workshop order form is not configured yet. Please contact the workshop directly.',
+      );
+      return;
+    }
+
+    setSubmissionState('submitting');
+    setErrorMessage('');
+
+    const formData = new FormData(event.currentTarget);
+    const customerEmail = formData.get('email');
+    if (typeof customerEmail === 'string') {
+      formData.append('_replyto', customerEmail);
+    }
+
+    try {
+      const response = await fetch(`https://formspree.io/f/${encodeURIComponent(formId)}`, {
+        method: 'POST',
+        headers: { Accept: 'application/json' },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Formspree did not accept the order request.');
+      }
+
+      setSubmissionState('success');
+    } catch {
+      setSubmissionState('error');
+      setErrorMessage(
+        'We couldn’t send your request. Please check your connection and try again.',
+      );
+    }
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-xl border-border bg-background text-foreground sm:rounded-none">
-        {submitted ? (
+        {submissionState === 'success' ? (
           <div className="py-8 text-center" role="status" aria-live="polite">
             <span className="mb-4 inline-flex h-12 w-12 items-center justify-center border border-primary/40 text-primary">✓</span>
             <DialogHeader className="mb-4">
-              <DialogTitle className="font-serif text-2xl">Order request prepared</DialogTitle>
+              <DialogTitle className="font-serif text-2xl">Request sent</DialogTitle>
               <DialogDescription className="mx-auto max-w-sm">
-                This preview does not send or save orders yet. Formspree can be connected later to email this request to your team.
+                Your request for {product.name} has been sent to the workshop. They will contact you to confirm your order.
               </DialogDescription>
             </DialogHeader>
             <button
@@ -54,7 +95,7 @@ export function OrderFormDialog({ product, open, onOpenChange }: OrderFormDialog
               <p className="text-xs uppercase tracking-[0.25em] text-primary">Order inquiry</p>
               <DialogTitle className="font-serif text-2xl">Request this piece</DialogTitle>
               <DialogDescription>
-                Product information is filled in for you. Add your contact and delivery details to continue.
+                The product details are ready. Add your contact and delivery information.
               </DialogDescription>
             </DialogHeader>
 
@@ -70,7 +111,7 @@ export function OrderFormDialog({ product, open, onOpenChange }: OrderFormDialog
                 </p>
               </div>
               <p className="mt-3 border-t border-border pt-3 text-xs leading-relaxed text-muted-foreground">
-                Sample listing details only. Confirm final pricing, specifications, and availability with the workshop.
+                These are sample details. The workshop will confirm the final price and availability.
               </p>
             </div>
 
@@ -78,11 +119,28 @@ export function OrderFormDialog({ product, open, onOpenChange }: OrderFormDialog
               <input type="hidden" name="productName" value={product.name} />
               <input type="hidden" name="productSlug" value={product.slug} />
               <input type="hidden" name="samplePricePKR" value={product.price} />
+              <input
+                type="hidden"
+                name="samplePriceDisplay"
+                value={`${product.priceQualifier === 'starting' ? 'From ' : ''}${formatPrice(product.price)}`}
+              />
               <input type="hidden" name="sampleStockStatus" value={product.stock} />
+              <input
+                type="hidden"
+                name="sampleAvailability"
+                value={product.stock === 'in-stock' ? 'Listed as in stock' : 'Listed as out of stock'}
+              />
+              <input type="hidden" name="productCategory" value={product.category} />
+              <input type="hidden" name="productDescription" value={product.description} />
               <input
                 type="hidden"
                 name="productSpecifications"
                 value={product.specs.map((spec) => `${spec.label}: ${spec.value}`).join('; ')}
+              />
+              <input
+                type="hidden"
+                name="_subject"
+                value={`Furniture order request: ${product.name}`}
               />
 
               <div className="grid gap-4 sm:grid-cols-2">
@@ -147,7 +205,7 @@ export function OrderFormDialog({ product, open, onOpenChange }: OrderFormDialog
               </label>
 
               <label className="block space-y-2 text-xs uppercase tracking-widest text-foreground/70">
-                Notes or customization
+                Notes or changes
                 <textarea
                   name="notes"
                   rows={3}
@@ -157,14 +215,21 @@ export function OrderFormDialog({ product, open, onOpenChange }: OrderFormDialog
               </label>
 
               <p className="text-xs leading-relaxed text-muted-foreground">
-                Sample pricing and stock are not a confirmed quote. Submitting this preview form will not send an email yet.
+                The price and availability are examples. The workshop will confirm them.
               </p>
+
+              {submissionState === 'error' && (
+                <p className="text-sm text-destructive" role="alert" aria-live="assertive">
+                  {errorMessage}
+                </p>
+              )}
 
               <button
                 type="submit"
-                className="w-full bg-primary px-6 py-4 text-sm font-medium uppercase tracking-[0.2em] text-primary-foreground transition-colors hover:bg-primary/90"
+                disabled={submissionState === 'submitting'}
+                className="w-full bg-primary px-6 py-4 text-sm font-medium uppercase tracking-[0.2em] text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-wait disabled:opacity-60"
               >
-                Submit order request
+                {submissionState === 'submitting' ? 'Sending request…' : 'Submit order request'}
               </button>
             </form>
           </>

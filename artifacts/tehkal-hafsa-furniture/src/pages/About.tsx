@@ -9,7 +9,7 @@ export default function About() {
       <div className="container mx-auto px-6 max-w-7xl">
         <FadeIn className="text-center mb-24">
           <span className="text-primary text-sm tracking-[0.3em] uppercase mb-4 block">Our Story</span>
-          <h1 className="font-serif text-5xl md:text-7xl text-foreground mb-6">A Legacy of Wood.</h1>
+          <h1 className="font-serif text-5xl md:text-7xl text-foreground mb-6">Furniture Made to Last.</h1>
         </FadeIn>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center mb-32">
@@ -20,30 +20,30 @@ export default function About() {
           </FadeIn>
           <FadeIn direction="left" className="space-y-8 text-foreground/70 font-light leading-relaxed text-lg">
             <p>
-              Founded over a decade ago in the heart of Peshawar, Tehkal Hafsa Furniture began with a simple yet ambitious vision: to elevate the standard of bespoke furniture in Pakistan. 
+              We started in Peshawar over 10 years ago. Our goal is simple: make well-built furniture that suits each home.
             </p>
             <p>
-              We believe that furniture is the soul of a home. It witnesses your quiet mornings, hosts your grandest celebrations, and holds the quiet moments in between. That is why every piece we create is treated not as a product, but as a legacy.
+              Furniture is part of everyday life. It is there for quiet mornings, family meals, and special occasions. We want each piece to be useful and last for years.
             </p>
             <p>
-              Our master artisans bring generations of woodworking heritage to our modern facility at Tambowano Morh. We source only the finest timbers — rich walnuts, sturdy oaks, and resilient mahoganies — treating them with the respect they deserve to bring out their innate beauty.
+              Our team works from our workshop at Tambowano Morh. We use walnut, oak, and mahogany, and finish each piece to show the wood's natural pattern.
             </p>
           </FadeIn>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center mb-32">
           <FadeIn direction="right" className="space-y-8 text-foreground/70 font-light leading-relaxed text-lg order-2 lg:order-1">
-            <h2 className="font-serif text-3xl text-foreground mb-4">The Craftsmanship</h2>
+            <h2 className="font-serif text-3xl text-foreground mb-4">How We Make Each Piece</h2>
             <p>
-              True luxury lies in the details that others overlook. At Tehkal Hafsa, we pride ourselves on our meticulous joinery, hand-finished surfaces, and uncompromising quality control.
+              We pay close attention to strong joints, smooth finishes, and careful quality checks.
             </p>
             <p>
-              We don't mass-produce. We design, we refine, and we craft. Whether it's a monumental dining table or a subtle minimalist console, the dedication remains absolute. Our gold accents are precise, our glassmorphism is flawless, and our wood stains are rich and enduring.
+              We do not make furniture in large batches. We plan and build each piece for its purpose, from dining tables to simple console tables. We take care with every detail and use finishes made to last.
             </p>
             <div className="grid grid-cols-2 gap-8 pt-8 border-t border-foreground/10 mt-8">
               <div>
                 <div className="text-primary font-serif text-4xl mb-2">10+</div>
-                <div className="text-foreground/50 text-xs uppercase tracking-widest">Years Experience</div>
+                  <div className="text-foreground/50 text-xs uppercase tracking-widest">Years of Experience</div>
               </div>
               <div>
                 <div className="text-primary font-serif text-4xl mb-2">500+</div>
@@ -53,7 +53,7 @@ export default function About() {
           </FadeIn>
           <FadeIn direction="left" className="order-1 lg:order-2">
             <div className="relative aspect-square overflow-hidden">
-              <img src={galleryImg} alt="Craftsmanship Detail" className="w-full h-full object-cover" />
+              <img src={galleryImg} alt="Woodworking detail" className="w-full h-full object-cover" />
             </div>
           </FadeIn>
         </div>

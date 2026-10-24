@@ -7,23 +7,23 @@ export default function Services() {
   const services = [
     {
       icon: <Hammer className="w-8 h-8 text-primary" />,
-      title: "Bespoke Furniture",
-      description: "Custom-designed and handcrafted pieces tailored exactly to your space, style, and requirements. From statement dining tables to specialized storage solutions."
+      title: "Custom Furniture",
+      description: "We make furniture to fit your room, style, and needs. Choose from dining tables, storage, and more."
     },
     {
       icon: <Ruler className="w-8 h-8 text-primary" />,
-      title: "Space Planning",
-      description: "Expert consultation to optimize your living or working environment. We ensure our furniture pieces complement your architectural layout perfectly."
+      title: "Room Planning",
+      description: "We help plan your room so the furniture fits well and works for the way you use the space."
     },
     {
       icon: <Armchair className="w-8 h-8 text-primary" />,
-      title: "Upholstery & Fabrics",
-      description: "Premium upholstery services featuring high-end imported fabrics, luxurious velvets, and genuine leathers. We revitalize old pieces or create plush new seating."
+      title: "Furniture Covers & Fabrics",
+      description: "Choose from imported fabrics, velvet, and real leather. We can cover old furniture or make new seats."
     },
     {
       icon: <Paintbrush className="w-8 h-8 text-primary" />,
-      title: "Finishing & Restoration",
-      description: "Masterful wood staining, polishing, and restorative services. We bring out the natural grain and protect your investment for generations."
+      title: "Wood Repair & Polish",
+      description: "We stain, polish, and repair wood furniture. Our finishes show the wood's natural pattern and help protect it."
     }
   ];
 
@@ -31,14 +31,14 @@ export default function Services() {
     <div className="w-full pt-32 pb-20">
       <div className="container mx-auto px-6 max-w-7xl">
         <FadeIn className="text-center mb-24">
-          <span className="text-primary text-sm tracking-[0.3em] uppercase mb-4 block">Our Expertise</span>
+          <span className="text-primary text-sm tracking-[0.3em] uppercase mb-4 block">What We Do</span>
           <h1 className="font-serif text-5xl md:text-7xl text-foreground mb-6">Services.</h1>
-          <p className="text-foreground/60 max-w-2xl mx-auto text-lg font-light">Comprehensive interior and woodworking solutions for those who demand excellence.</p>
+          <p className="text-foreground/60 max-w-2xl mx-auto text-lg font-light">Furniture and woodworking services for your home or business.</p>
         </FadeIn>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-32">
           <FadeIn direction="right">
-             <img src={projectImg} alt="Services Preview" className="w-full h-[600px] object-cover" />
+             <img src={projectImg} alt="Furniture made for a project" className="w-full h-[600px] object-cover" />
           </FadeIn>
           
           <div className="flex flex-col justify-center">

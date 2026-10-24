@@ -30,3 +30,8 @@ externalPort = 8081
 [[ports]]
 localPort = 25266
 externalPort = 3000
+
+[userenv]
+
+[userenv.shared]
+VITE_FORMSPREE_FORM_ID = "https://formspree.io/f/xzeebqnz"

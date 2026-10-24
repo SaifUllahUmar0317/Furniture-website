@@ -27,7 +27,7 @@ export default function ProductDetail() {
           href="/products"
           className="mb-8 inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-primary"
         >
-          <ArrowLeft size={15} /> Back to collection
+          <ArrowLeft size={15} /> Back to furniture
         </Link>
 
         <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
@@ -49,28 +49,28 @@ export default function ProductDetail() {
 
             <div className="mt-7 border-y border-border py-5">
               <span className="block text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                Illustrative {product.priceQualifier === 'starting' ? 'starting price' : 'price'} · PKR
+                Sample {product.priceQualifier === 'starting' ? 'starting price' : 'price'} · PKR
               </span>
               <p className="mt-2 font-serif text-3xl text-foreground">
                 {product.priceQualifier === 'starting' ? 'From ' : ''}
                 {formatPrice(product.price)}
               </p>
-              <p className="mt-2 text-xs text-muted-foreground">Sample price only; the final quote depends on confirmed materials, dimensions, and finish.</p>
+              <p className="mt-2 text-xs text-muted-foreground">This is a sample price. We will confirm the price after you choose the materials, size, and finish.</p>
             </div>
 
             <div className="mt-5 flex items-center gap-2 text-sm">
               {product.stock === 'in-stock' ? (
                 <>
                   <Check size={17} className="text-emerald-700 dark:text-emerald-400" />
-                  <span className="text-emerald-700 dark:text-emerald-400">In stock</span>
+                  <span className="text-emerald-700 dark:text-emerald-400">Available</span>
                 </>
               ) : (
                 <>
                   <X size={17} className="text-rose-700 dark:text-rose-400" />
-                  <span className="text-rose-700 dark:text-rose-400">Out of stock</span>
+                  <span className="text-rose-700 dark:text-rose-400">Not in stock</span>
                 </>
               )}
-              <span className="text-muted-foreground">· sample status</span>
+              <span className="text-muted-foreground">· sample details</span>
             </div>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -79,7 +79,7 @@ export default function ProductDetail() {
                 onClick={() => setOrderOpen(true)}
                 className="inline-flex flex-1 items-center justify-center gap-2 bg-primary px-6 py-4 text-sm font-medium uppercase tracking-[0.18em] text-primary-foreground transition-colors hover:bg-primary/90"
               >
-                {product.stock === 'in-stock' ? 'Order Now' : 'Request Availability'}
+                {product.stock === 'in-stock' ? 'Order Now' : 'Ask When Available'}
                 <ArrowRight size={16} />
               </button>
               <Link
@@ -91,11 +91,11 @@ export default function ProductDetail() {
             </div>
 
             <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
-              Specifications and availability shown here are sample values. The workshop will confirm the final order details.
+              The details and availability shown here are samples. The workshop will confirm your order details.
             </p>
 
             <section className="mt-10">
-              <h2 className="mb-4 font-serif text-2xl text-foreground">Specifications</h2>
+              <h2 className="mb-4 font-serif text-2xl text-foreground">Details</h2>
               <dl className="divide-y divide-border border-y border-border">
                 {product.specs.map((spec) => (
                   <div key={spec.label} className="grid grid-cols-[minmax(7rem,0.7fr)_1.3fr] gap-4 py-3.5 text-sm">
@@ -107,8 +107,8 @@ export default function ProductDetail() {
             </section>
 
             <div className="mt-7 border border-border bg-card p-4 text-sm leading-relaxed text-foreground/70">
-              <span className="font-medium text-foreground">Made for your space.</span>{' '}
-              Contact the workshop to confirm custom dimensions, material options, delivery, and installation.
+              <span className="font-medium text-foreground">Need a different size?</span>{' '}
+              Contact us to ask about sizes, materials, delivery, or installation.
             </div>
           </FadeIn>
         </div>
@@ -116,11 +116,11 @@ export default function ProductDetail() {
         <section className="mt-20 border-t border-border pt-10">
           <div className="flex items-end justify-between gap-4">
             <div>
-              <span className="text-xs uppercase tracking-[0.25em] text-primary">More to explore</span>
-              <h2 className="mt-2 font-serif text-3xl text-foreground">Related pieces</h2>
+              <span className="text-xs uppercase tracking-[0.25em] text-primary">You may also like</span>
+              <h2 className="mt-2 font-serif text-3xl text-foreground">Similar furniture</h2>
             </div>
             <Link href="/products" className="hidden items-center gap-2 text-xs uppercase tracking-widest text-primary hover:text-foreground sm:inline-flex">
-              View all <ArrowRight size={14} />
+              See all furniture <ArrowRight size={14} />
             </Link>
           </div>
           <div className="mt-7 grid grid-cols-1 gap-5 sm:grid-cols-3">

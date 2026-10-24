@@ -12,7 +12,7 @@ const NAV_LINKS = [
   { label: 'Gallery', href: '/gallery' },
   { label: 'Projects', href: '/projects' },
   { label: 'Why Us', href: '/why-us' },
-  { label: 'FAQ', href: '/faq' },
+  { label: 'Questions', href: '/faq' },
 ];
 
 export function Navbar() {
@@ -21,6 +21,7 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const isTransparentHero = location === '/' && !isScrolled;
+  const isLightHero = isTransparentHero && theme === 'light';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -42,25 +43,29 @@ export function Navbar() {
       }`}
     >
       <div className="container mx-auto px-6 max-w-7xl flex items-center justify-between">
-        <Link href="/" className="flex flex-col items-start z-50 group">
-          <span className="font-serif text-2xl tracking-widest uppercase text-foreground group-hover:text-primary transition-colors duration-500">
+        <Link href="/" className="z-50 flex shrink-0 flex-col items-start whitespace-nowrap group">
+          <span className={`font-serif text-xl tracking-[0.08em] uppercase whitespace-nowrap transition-colors duration-500 2xl:text-2xl ${
+            isLightHero ? 'text-[#FAF7EF] group-hover:text-[#C6A45C]' : 'text-foreground group-hover:text-primary'
+          }`}>
             Tehkal Hafsa
           </span>
-          <span className="font-sans text-[0.65rem] tracking-[0.3em] text-primary uppercase [text-shadow:0_1px_6px_rgba(0,0,0,0.5)]">
+          <span className={`font-sans text-[0.65rem] tracking-[0.3em] uppercase ${
+            isLightHero ? 'text-[#B88D3B]' : 'text-primary'
+          }`}>
             Furniture
           </span>
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center space-x-8">
+        <nav className="hidden items-center gap-3 whitespace-nowrap lg:flex xl:gap-4 2xl:gap-5">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className={`text-sm tracking-widest uppercase transition-all duration-300 hover:text-primary [text-shadow:0_1px_6px_rgba(0,0,0,0.4)] ${
+              className={`shrink-0 whitespace-nowrap text-[0.7rem] tracking-[0.12em] uppercase transition-all duration-300 hover:text-primary xl:text-xs 2xl:text-sm ${
                 location === link.href || (link.href === '/products' && location.startsWith('/products/'))
-                  ? isTransparentHero && theme === 'light' ? 'text-[#80651b]' : 'text-primary'
-                  : 'text-foreground/70'
+                  ? isLightHero ? 'text-[#B88D3B]' : 'text-primary'
+                  : isLightHero ? 'text-[#FAF7EF]/85' : 'text-foreground/70'
               }`}
             >
               {link.label}
@@ -68,14 +73,16 @@ export function Navbar() {
           ))}
           <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="ml-4 p-2 text-foreground/70 hover:text-primary transition-colors focus:outline-none"
+            className={`shrink-0 p-2 transition-colors focus:outline-none ${
+              isLightHero ? 'text-[#FAF7EF]/85 hover:text-[#C6A45C]' : 'text-foreground/70 hover:text-primary'
+            }`}
             aria-label="Toggle Theme"
           >
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
           <Link
             href="/contact"
-            className={`ml-4 px-6 py-2.5 uppercase tracking-widest text-xs transition-all duration-500 [text-shadow:0_1px_6px_rgba(0,0,0,0.4)] ${
+            className={`shrink-0 whitespace-nowrap px-4 py-2.5 text-xs uppercase tracking-[0.1em] transition-all duration-500 2xl:px-6 ${
               isTransparentHero && theme === 'light'
                 ? 'border border-primary bg-primary text-primary-foreground hover:bg-primary/90'
                 : 'border border-primary text-primary hover:bg-primary hover:text-primary-foreground'
@@ -89,13 +96,21 @@ export function Navbar() {
         <div className="flex items-center space-x-4 lg:hidden z-50">
           <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="text-foreground/70 hover:text-primary transition-colors focus:outline-none"
+            className={`transition-colors focus:outline-none ${
+              isLightHero && !mobileMenuOpen
+                ? 'text-[#FAF7EF]/85 hover:text-[#C6A45C]'
+                : 'text-foreground/70 hover:text-primary'
+            }`}
             aria-label="Toggle Theme"
           >
             {theme === 'dark' ? <Sun size={24} /> : <Moon size={24} />}
           </button>
           <button
-            className="text-foreground hover:text-primary transition-colors"
+            className={`transition-colors ${
+              isLightHero && !mobileMenuOpen
+                ? 'text-[#FAF7EF] hover:text-[#C6A45C]'
+                : 'text-foreground hover:text-primary'
+            }`}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle Menu"
           >

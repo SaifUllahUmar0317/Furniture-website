@@ -9,23 +9,23 @@ import kitchen from '@assets/generated_images/kitchen.jpg';
 const PROJECTS = [
   {
     id: 1,
-    title: "Hayatabad Luxury Villa",
-    type: "Full Home Interior",
-    desc: "A complete bespoke furniture solution for a 2-kanal modern luxury villa, featuring custom walnut panelling, grand dining sets, and opulent bedroom suites.",
+    title: "Hayatabad Villa",
+    type: "Whole-home furniture",
+    desc: "Custom furniture for a modern 2-kanal villa in Hayatabad. It includes walnut wall panels, a dining set, and bedroom furniture.",
     img: p1
   },
   {
     id: 2,
-    title: "Corporate Executive Suite",
-    type: "Commercial Office",
-    desc: "Premium executive furniture for a CEO's office in Peshawar. Highlighted by a massive mahogany desk, built-in library shelving, and leather seating.",
+    title: "Executive Office",
+    type: "Office furniture",
+    desc: "Furniture for a CEO's office in Peshawar, including a large mahogany desk, built-in bookshelves, and leather chairs.",
     img: p2
   },
   {
     id: 3,
-    title: "Modern Minimalist Kitchen",
-    type: "Kitchen & Cabinetry",
-    desc: "A sleek, functional yet highly luxurious dark-themed kitchen with gold hardware and integrated high-end appliances.",
+    title: "Modern Kitchen",
+    type: "Kitchen & cabinets",
+    desc: "A modern dark kitchen with gold handles and built-in appliances.",
     img: kitchen
   }
 ];
@@ -35,8 +35,8 @@ export default function Projects() {
     <div className="w-full pt-32 pb-20">
       <div className="container mx-auto px-6 max-w-7xl">
         <FadeIn className="text-center mb-24">
-          <span className="text-primary text-sm tracking-[0.3em] uppercase mb-4 block">Case Studies</span>
-          <h1 className="font-serif text-5xl md:text-7xl text-foreground mb-6">Our Projects.</h1>
+          <span className="text-primary text-sm tracking-[0.3em] uppercase mb-4 block">Our Work</span>
+          <h1 className="font-serif text-5xl md:text-7xl text-foreground mb-6">Our Projects</h1>
         </FadeIn>
 
         <StaggerContainer className="space-y-32">
@@ -60,7 +60,7 @@ export default function Projects() {
                 </p>
                 <div className="pt-6">
                   <Link href="/contact" className="inline-block border-b border-primary text-primary pb-1 uppercase tracking-widest text-sm hover:text-foreground hover:border-foreground transition-colors">
-                    Inquire About Similar Project
+                    Ask About a Similar Project
                   </Link>
                 </div>
               </div>

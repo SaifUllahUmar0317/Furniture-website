@@ -5,27 +5,27 @@ import { Plus, Minus } from 'lucide-react';
 const FAQS = [
   {
     q: "Do you offer custom furniture design?",
-    a: "Yes, bespoke furniture is our specialty. We work closely with clients to design and craft pieces that perfectly fit their space, style preferences, and functional needs."
+    a: "Yes. We make furniture to fit your space, style, and needs."
   },
   {
     q: "What types of wood do you use?",
-    a: "We source only premium, durable woods including Walnut, Oak, Ash, Mahogany, and high-grade Teak. The choice of wood depends on the piece, the desired finish, and the client's preference."
+    a: "We use walnut, oak, ash, mahogany, and teak. The right wood depends on the piece, the finish, and what you prefer."
   },
   {
     q: "How long does a custom piece take to make?",
-    a: "Depending on the complexity and scale of the project, a bespoke piece typically takes between 3 to 8 weeks from final design approval to delivery. We prioritize uncompromised quality over speed."
+    a: "Most custom pieces take 3 to 8 weeks after you approve the design. Larger or more detailed projects may take longer."
   },
   {
     q: "Do you deliver outside Peshawar?",
-    a: "While our primary focus is Peshawar and its surrounding areas, we can arrange specialized, secure delivery for major projects across Pakistan upon request."
+    a: "We mainly serve Peshawar and nearby areas. For larger projects, we can arrange delivery to other parts of Pakistan. Contact us for details."
   },
   {
-    q: "Can you restore or polish existing furniture?",
-    a: "Yes, our master craftsmen offer premium restoration and polishing services to revive antique or well-worn luxury pieces, bringing back their original luster."
+    q: "Can you repair or polish my old furniture?",
+    a: "Yes. We repair and polish old or worn furniture to help it look its best again."
   },
   {
     q: "How do I start a custom project?",
-    a: "Simply reach out via our contact form, email, or visit our showroom at Tambowano Morh. We will schedule a consultation to discuss your vision, take measurements, and provide a quotation."
+    a: "Contact us, email us, or visit our showroom at Tambowano Morh. We will talk about what you need, measure your space, and give you a quote."
   }
 ];
 
@@ -36,8 +36,8 @@ export default function FAQ() {
     <div className="w-full pt-32 pb-20 min-h-screen">
       <div className="container mx-auto px-6 max-w-4xl">
         <FadeIn className="text-center mb-20">
-          <span className="text-primary text-sm tracking-[0.3em] uppercase mb-4 block">Information</span>
-          <h1 className="font-serif text-5xl md:text-7xl text-foreground mb-6">FAQ.</h1>
+          <span className="text-primary text-sm tracking-[0.3em] uppercase mb-4 block">Questions</span>
+          <h1 className="font-serif text-5xl md:text-7xl text-foreground mb-6">Common Questions</h1>
         </FadeIn>
 
         <StaggerContainer className="space-y-4">

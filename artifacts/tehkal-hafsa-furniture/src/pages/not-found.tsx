@@ -13,13 +13,13 @@ export default function NotFound() {
         <h1 className="font-serif text-6xl md:text-8xl text-foreground mb-6">404</h1>
         <h2 className="font-sans text-xs md:text-sm tracking-[0.4em] uppercase text-primary mb-8 block">Page Not Found</h2>
         <p className="text-foreground/60 mb-12 max-w-md mx-auto font-light leading-relaxed">
-          The page you are looking for might have been removed, had its name changed, or is temporarily unavailable in our catalog.
+          We cannot find this page. It may have moved, or the address may be wrong.
         </p>
         <Link 
           href="/" 
           className="px-8 py-4 border border-foreground/20 text-foreground uppercase tracking-widest text-sm font-medium hover:bg-foreground hover:text-background hover:border-foreground transition-all duration-500 inline-block"
         >
-          Return Home
+          Go to Home
         </Link>
       </FadeIn>
     </div>

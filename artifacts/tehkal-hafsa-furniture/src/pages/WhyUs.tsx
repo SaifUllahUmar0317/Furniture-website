@@ -7,23 +7,23 @@ export default function WhyUs() {
   const reasons = [
     {
       icon: <Award className="w-8 h-8 text-primary" />,
-      title: "Master Craftsmanship",
-      desc: "Our artisans possess decades of combined experience, ensuring every cut, join, and finish meets international luxury standards."
+      title: "Skilled Craft",
+      desc: "Our team has years of woodworking experience. We carefully cut, join, and finish each piece."
     },
     {
       icon: <Clock className="w-8 h-8 text-primary" />,
-      title: "Timeless Design",
-      desc: "We blend traditional woodworking integrity with contemporary aesthetics to create pieces that transcend passing trends."
+      title: "Made to Last",
+      desc: "We combine classic woodworking methods with simple, modern designs."
     },
     {
       icon: <ShieldCheck className="w-8 h-8 text-primary" />,
-      title: "Uncompromising Quality",
-      desc: "From the raw timber to the final coat of polish, we meticulously inspect every stage of the production process."
+      title: "Quality Checks",
+      desc: "We check each piece from the raw wood to the final finish."
     },
     {
       icon: <Leaf className="w-8 h-8 text-primary" />,
-      title: "Sustainable Sourcing",
-      desc: "We select premium woods from responsible sources, respecting the environment while delivering exceptional durability."
+      title: "Responsible Wood Choices",
+      desc: "We choose durable wood from responsible sources and work to reduce harm to the environment."
     }
   ];
 
@@ -31,8 +31,8 @@ export default function WhyUs() {
     <div className="w-full pt-32 pb-20">
       <div className="container mx-auto px-6 max-w-7xl">
         <FadeIn className="text-center mb-24">
-          <span className="text-primary text-sm tracking-[0.3em] uppercase mb-4 block">The Tehkal Hafsa Difference</span>
-          <h1 className="font-serif text-5xl md:text-7xl text-foreground mb-6">Why Choose Us.</h1>
+          <span className="text-primary text-sm tracking-[0.3em] uppercase mb-4 block">Why Tehkal Hafsa</span>
+          <h1 className="font-serif text-5xl md:text-7xl text-foreground mb-6">Why Choose Us?</h1>
         </FadeIn>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
@@ -56,7 +56,7 @@ export default function WhyUs() {
           
           <FadeIn direction="left">
             <div className="relative aspect-[3/4] overflow-hidden">
-              <img src={aboutImg} alt="Craftsmanship" className="w-full h-full object-cover" />
+              <img src={aboutImg} alt="Furniture being made" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-60" />
             </div>
           </FadeIn>

@@ -52,16 +52,16 @@ export default function Products() {
     <div className="w-full pt-32 pb-24">
       <div className="container mx-auto max-w-7xl px-6">
         <FadeIn className="mb-12 text-center">
-          <span className="mb-4 block text-sm uppercase tracking-[0.3em] text-primary">The Collection</span>
-          <h1 className="mb-5 font-serif text-5xl text-foreground md:text-7xl">Furniture & Interiors</h1>
+          <span className="mb-4 block text-sm uppercase tracking-[0.3em] text-primary">Our Furniture</span>
+          <h1 className="mb-5 font-serif text-5xl text-foreground md:text-7xl">Furniture for Your Home</h1>
           <p className="mx-auto max-w-2xl text-base leading-relaxed text-foreground/65 md:text-lg">
-            Considered pieces, made for the way you live. Explore the collection and request a quote from our workshop.
+            Browse our furniture and ask the workshop for a quote.
           </p>
         </FadeIn>
 
         <div className="mb-10 border border-primary/30 bg-card/70 px-5 py-4 text-sm leading-relaxed text-foreground/75">
-          <span className="font-medium text-primary">Illustrative demo catalog.</span>{' '}
-          Prices are shown in PKR, and product specifications and stock statuses are sample values. Our team will confirm the final quote and availability.
+          <span className="font-medium text-primary">Sample product list.</span>{' '}
+          Prices, details, and availability are examples only. The workshop will confirm the final price and stock.
         </div>
 
         <div className="mb-7 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -141,7 +141,7 @@ export default function Products() {
                           product.stock === 'in-stock' ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-700 dark:text-rose-400'
                         }`}
                       >
-                        {product.stock === 'in-stock' ? 'In stock' : 'Out of stock'} · sample
+                        {product.stock === 'in-stock' ? 'Available' : 'Not available'} · sample
                       </span>
                     </div>
 
@@ -172,7 +172,7 @@ export default function Products() {
                         href={`/products/${product.slug}`}
                         className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-primary hover:text-foreground"
                       >
-                        Details <ArrowRight size={14} />
+                        View details <ArrowRight size={14} />
                       </Link>
                     </div>
 
@@ -190,7 +190,7 @@ export default function Products() {
           </div>
         ) : (
           <div className="border border-border bg-card px-6 py-16 text-center">
-            <h2 className="font-serif text-2xl text-foreground">No matching pieces</h2>
+            <h2 className="font-serif text-2xl text-foreground">No furniture found</h2>
             <p className="mt-2 text-sm text-muted-foreground">Try another search or choose a different category.</p>
             <button
               type="button"

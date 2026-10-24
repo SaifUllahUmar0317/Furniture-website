@@ -36,36 +36,36 @@
 }
 
 :root {
-  /* Light Luxury Theme */
-  --background: 46 20% 95%; /* Warm off-white */
-  --foreground: 227 60% 4%; /* Deep navy/charcoal */
-  
-  --card: 46 20% 98%;
-  --card-foreground: 227 60% 4%;
-  --card-border: 227 60% 4% / 0.1;
+  /* Warm ivory, ink, and antique brass for the light luxury theme */
+  --background: 42 38% 96%;
+  --foreground: 224 22% 13%;
 
-  --popover: 46 20% 95%;
-  --popover-foreground: 227 60% 4%;
-  --popover-border: 227 60% 4% / 0.1;
+  --card: 42 30% 99%;
+  --card-foreground: 224 22% 13%;
+  --card-border: 38 20% 82%;
 
-  --primary: 46 65% 52%; /* Luxury Gold #D4AF37 */
-  --primary-foreground: 227 60% 4%;
+  --popover: 42 30% 99%;
+  --popover-foreground: 224 22% 13%;
+  --popover-border: 38 20% 82%;
 
-  --secondary: 46 15% 85%;
-  --secondary-foreground: 227 60% 4%;
+  --primary: 40 68% 29%;
+  --primary-foreground: 0 0% 100%;
 
-  --muted: 46 15% 90%;
-  --muted-foreground: 227 15% 35%;
+  --secondary: 40 24% 89%;
+  --secondary-foreground: 224 22% 13%;
 
-  --accent: 46 65% 52% / 0.1;
-  --accent-foreground: 46 65% 52%;
+  --muted: 40 25% 92%;
+  --muted-foreground: 222 13% 34%;
+
+  --accent: 40 68% 29% / 0.1;
+  --accent-foreground: 40 68% 29%;
 
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
 
-  --border: 227 60% 4% / 0.15;
-  --input: 46 15% 90%;
-  --ring: 46 65% 52%;
+  --border: 38 20% 82%;
+  --input: 40 20% 91%;
+  --ring: 40 68% 29%;
 
   --radius: 0rem; /* Sharp edges for luxury feel */
 

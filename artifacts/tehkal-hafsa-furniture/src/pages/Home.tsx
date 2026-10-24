@@ -16,27 +16,27 @@ export default function Home() {
         <div className="absolute inset-0 z-0">
           <img
             src={heroImg}
-            alt="Luxury Furniture Interior"
-            className="w-full h-full object-cover brightness-[1.12] scale-105 animate-in slide-in-from-bottom-2 duration-[2000ms]"
+            alt="Furniture in a living room"
+            className="w-full h-full object-cover scale-105 animate-in slide-in-from-bottom-2 duration-[2000ms]"
           />
-          <div className="absolute inset-0 bg-background/30 backdrop-blur-[1px] dark:bg-background/40" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background/55 via-background/10 to-transparent dark:from-background/60 dark:via-background/10" />
+          <div className="absolute inset-0 bg-black/15 dark:bg-background/35" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent dark:from-background/60 dark:via-background/10 dark:to-transparent" />
         </div>
 
         <div className="container mx-auto px-6 relative z-10 text-center mt-20">
           <FadeIn delay={0.2}>
-            <span className="font-sans text-xs md:text-sm tracking-[0.4em] uppercase text-primary mb-6 block [text-shadow:0_1px_8px_rgba(0,0,0,0.6)]">
+            <span className="font-sans text-xs md:text-sm tracking-[0.4em] uppercase text-[#B88D3B] dark:text-primary mb-6 block">
               Welcome to Tehkal Hafsa
             </span>
           </FadeIn>
           <FadeIn delay={0.4}>
-            <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl text-foreground leading-tight mb-8 max-w-5xl mx-auto">
-              Crafting Premium Furniture for <span className="italic text-foreground/90">Modern Living.</span>
+            <h1 className="font-serif text-balance text-5xl md:text-7xl lg:text-8xl text-[#FAF7EF] dark:text-foreground leading-tight mb-8 max-w-5xl mx-auto">
+              Furniture Made for <span className="italic text-[#F2EBDD] dark:text-foreground/90">Modern Homes.</span>
             </h1>
           </FadeIn>
           <FadeIn delay={0.6}>
-            <p className="text-foreground/75 max-w-2xl mx-auto text-lg mb-12 font-light leading-relaxed">
-              Over a decade of excellence in bespoke woodworking and luxury interior solutions in Peshawar. We don't just build furniture; we curate lifestyles.
+            <p className="text-[#F7F3E8]/85 dark:text-foreground/75 max-w-2xl mx-auto text-lg mb-12 font-light leading-relaxed">
+              We have made furniture and designed rooms in Peshawar for over 10 years. We build pieces that fit your home and the way you use it.
             </p>
           </FadeIn>
           <FadeIn delay={0.8}>
@@ -45,13 +45,13 @@ export default function Home() {
                 href="/products"
                 className="px-8 py-4 bg-primary text-primary-foreground uppercase tracking-widest text-sm font-medium hover:bg-foreground hover:text-background transition-colors duration-500"
               >
-                Explore Collection
+                Browse Furniture
               </Link>
               <Link
                 href="/contact"
-                className="px-8 py-4 border border-foreground/35 text-foreground uppercase tracking-widest text-sm font-medium hover:border-primary hover:text-primary transition-colors duration-500"
+                className="px-8 py-4 border border-[#F7F3E8]/50 text-[#F7F3E8] dark:border-foreground/35 dark:text-foreground uppercase tracking-widest text-sm font-medium hover:border-[#B88D3B] hover:text-[#C6A45C] dark:hover:border-primary dark:hover:text-primary transition-colors duration-500"
               >
-                Book Consultation
+                Contact Us
               </Link>
             </div>
           </FadeIn>
@@ -64,12 +64,12 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             <div>
               <FadeIn direction="right">
-                <span className="text-primary text-sm tracking-[0.3em] uppercase mb-4 block">The Art of Craft</span>
+                <span className="text-primary text-sm tracking-[0.3em] uppercase mb-4 block">Our Craft</span>
                 <h2 className="font-serif text-4xl md:text-5xl text-foreground leading-tight mb-8">
-                  Where tradition meets contemporary luxury.
+                  Skilled woodworking with a modern style.
                 </h2>
                 <p className="text-foreground/60 text-lg leading-relaxed mb-8 font-light">
-                  For over 10 years, Tehkal Hafsa Furniture has been the premier destination for discerning homeowners in Peshawar. Our master craftsmen combine generations of woodworking expertise with modern design sensibilities to create pieces that are as functional as they are breathtaking.
+                  For over 10 years, our team has made furniture in Peshawar. We use skilled woodworking and modern designs to make useful pieces that last.
                 </p>
                 <Link
                   href="/about"
@@ -82,12 +82,12 @@ export default function Home() {
             <div className="relative">
               <FadeIn direction="left">
                 <div className="relative aspect-[4/5] w-full overflow-hidden">
-                  <img src={aboutImg} alt="Craftsmanship" className="w-full h-full object-cover" />
+                  <img src={aboutImg} alt="Furniture being made" className="w-full h-full object-cover" />
                   <div className="absolute inset-0 border border-border" />
                 </div>
                 <div className="absolute -bottom-10 -left-10 bg-card p-8 border border-border shadow-2xl glass-panel hidden md:block">
                   <div className="text-primary font-serif text-5xl mb-2">10+</div>
-                  <div className="text-foreground/70 uppercase tracking-widest text-xs">Years of Excellence</div>
+                  <div className="text-foreground/70 uppercase tracking-widest text-xs">Years of Experience</div>
                 </div>
               </FadeIn>
             </div>
@@ -99,15 +99,15 @@ export default function Home() {
       <section className="py-32 bg-muted relative">
         <div className="container mx-auto px-6 max-w-7xl">
           <FadeIn className="text-center mb-20">
-            <span className="text-primary text-sm tracking-[0.3em] uppercase mb-4 block">Curated Selection</span>
-            <h2 className="font-serif text-4xl md:text-5xl text-foreground mb-6">Signature Collections</h2>
+            <span className="text-primary text-sm tracking-[0.3em] uppercase mb-4 block">Our Collection</span>
+            <h2 className="font-serif text-4xl md:text-5xl text-foreground mb-6">Furniture for Every Room</h2>
           </FadeIn>
 
           <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               { title: 'Living Room', img: sofaImg, path: '/products?category=sofas' },
               { title: 'Dining Space', img: diningImg, path: '/products?category=dining' },
-              { title: 'Bespoke Projects', img: project1Img, path: '/projects' },
+              { title: 'Custom Projects', img: project1Img, path: '/projects' },
             ].map((category, i) => (
               <StaggerItem key={i}>
                 <Link href={category.path} className="group block relative overflow-hidden aspect-[3/4]">
@@ -133,7 +133,7 @@ export default function Home() {
           
           <div className="mt-16 text-center">
             <Link href="/products" className="inline-block border-b border-primary text-primary pb-1 uppercase tracking-widest text-sm hover:text-foreground hover:border-foreground transition-colors">
-              View All Categories
+              View All Furniture
             </Link>
           </div>
         </div>

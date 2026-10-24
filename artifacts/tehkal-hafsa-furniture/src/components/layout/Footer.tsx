@@ -27,7 +27,7 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-foreground/60 text-sm leading-relaxed mt-4">
-              Crafting Premium Furniture for Modern Living. Over a decade of excellence in bespoke woodworking and luxury interior solutions in Peshawar.
+              We make custom furniture and interiors in Peshawar. We have been doing this for over 10 years.
             </p>
           </div>
 
@@ -55,9 +55,9 @@ export function Footer() {
               {[
                 { label: 'Gallery', path: '/gallery' },
                 { label: 'Why Choose Us', path: '/why-us' },
-                { label: 'FAQ', path: '/faq' },
+                { label: 'Questions', path: '/faq' },
                 { label: 'Privacy Policy', path: '/privacy' },
-                { label: 'Terms & Conditions', path: '/terms' },
+                { label: 'Terms', path: '/terms' },
               ].map((item) => (
                 <li key={item.path}>
                   <Link
@@ -116,7 +116,7 @@ export function Footer() {
             &copy; {currentYear} Tehkal Hafsa Furniture. All rights reserved.
           </p>
           <p className="text-foreground/40 text-xs tracking-widest uppercase mt-4 md:mt-0">
-            Crafted with passion in Peshawar
+            Made in Peshawar
           </p>
         </div>
       </div>

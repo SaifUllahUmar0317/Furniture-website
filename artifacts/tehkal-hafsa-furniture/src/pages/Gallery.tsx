@@ -22,10 +22,10 @@ export default function Gallery() {
     <div className="w-full pt-32 pb-20">
       <div className="container mx-auto px-6 max-w-7xl">
         <FadeIn className="text-center mb-24">
-          <span className="text-primary text-sm tracking-[0.3em] uppercase mb-4 block">Visual Showcase</span>
+          <span className="text-primary text-sm tracking-[0.3em] uppercase mb-4 block">Our Photos</span>
           <h1 className="font-serif text-5xl md:text-7xl text-foreground mb-6">Gallery.</h1>
           <p className="text-foreground/60 max-w-2xl mx-auto text-lg font-light">
-            A glimpse into our workshop's finest creations and meticulous details.
+            See furniture made in our workshop.
           </p>
         </FadeIn>
 
