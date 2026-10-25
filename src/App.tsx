@@ -1,7 +1,8 @@
+import { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { Route, Switch, Router as WouterRouter } from 'wouter';
+import { Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
 
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
@@ -27,9 +28,32 @@ import { ThemeProvider } from '@/lib/theme-provider';
 
 const queryClient = new QueryClient();
 
+// Automatically scroll to the top of the page on any route navigation
+function ScrollToTop() {
+  const [location] = useLocation();
+
+  useEffect(() => {
+    // Disable smooth scrolling temporarily to jump immediately to the top of the page
+    document.documentElement.style.scrollBehavior = 'auto';
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+
+    // Restore standard smooth scroll behavior for in-page anchors
+    const timer = setTimeout(() => {
+      document.documentElement.style.scrollBehavior = '';
+    }, 60);
+
+    return () => clearTimeout(timer);
+  }, [location]);
+
+  return null;
+}
+
 function Router() {
   return (
     <div className="min-h-[100dvh] flex flex-col selection:bg-primary/30 selection:text-primary-foreground">
+      <ScrollToTop />
       <Noise />
       <Navbar />
       <main className="flex-1 flex flex-col">

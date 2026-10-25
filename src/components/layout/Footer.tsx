@@ -18,7 +18,11 @@ export function Footer() {
           
           {/* Brand */}
           <div className="flex flex-col space-y-6">
-            <Link href="/" className="flex flex-col items-start group inline-block">
+            <Link
+              href="/"
+              onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' })}
+              className="flex flex-col items-start group inline-block"
+            >
               <span className="font-serif text-3xl tracking-widest uppercase text-foreground">
                 Tehkal Hafsa
               </span>
@@ -39,6 +43,7 @@ export function Footer() {
                 <li key={link}>
                   <Link
                     href={link === 'Home' ? '/' : `/${link.toLowerCase()}`}
+                    onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' })}
                     className="text-foreground/60 hover:text-primary transition-colors text-sm tracking-wide uppercase"
                   >
                     {link}
@@ -63,6 +68,7 @@ export function Footer() {
                 <li key={item.path}>
                   <Link
                     href={item.path}
+                    onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' })}
                     className="text-foreground/60 hover:text-primary transition-colors text-sm tracking-wide uppercase"
                   >
                     {item.label}
