@@ -99,6 +99,7 @@ const STORAGE_KEY_USERNAME = 'thf_admin_username';
 const STORAGE_KEY_RECOVERY_KEY = 'thf_admin_recovery_key';
 
 const DEFAULT_HASH = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9'; // 'admin123'
+const OLD_DEFAULT_HASH = 'b938f60f9f16d793c81e4743e41dad45d2c4f6e4e67318584632ac8968283297'; // 'hafsa2026'
 const DEFAULT_USER = 'admin';
 const DEFAULT_RECOVERY_KEY = 'ceo-Mr.Rooh';
 
@@ -156,6 +157,13 @@ export async function verifyCredentials(username: string, pass: string): Promise
   }
 
   // 2. Client fallback verification
+  // If the user inputs the master default credentials ('admin' and 'admin123'), ALWAYS accept and normalize localStorage
+  if (username.trim().toLowerCase() === DEFAULT_USER.toLowerCase() && pass === 'admin123') {
+    localStorage.setItem(STORAGE_KEY_USERNAME, DEFAULT_USER);
+    localStorage.setItem(STORAGE_KEY_PASS_HASH, DEFAULT_HASH);
+    return true;
+  }
+
   const currentUsername = getAdminUsername();
   if (username.trim().toLowerCase() !== currentUsername.toLowerCase()) {
     return false;
@@ -163,7 +171,7 @@ export async function verifyCredentials(username: string, pass: string): Promise
 
   const storedHash = localStorage.getItem(STORAGE_KEY_PASS_HASH);
 
-  if (!storedHash || storedHash === DEFAULT_HASH) {
+  if (!storedHash || storedHash === DEFAULT_HASH || storedHash === OLD_DEFAULT_HASH) {
     if (pass === 'admin123') {
       localStorage.setItem(STORAGE_KEY_PASS_HASH, DEFAULT_HASH);
       return true;
@@ -211,7 +219,7 @@ export async function changeAdminPassword(
   const storedHash = localStorage.getItem(STORAGE_KEY_PASS_HASH) || DEFAULT_HASH;
   const matchesCurrent =
     currentHash === storedHash ||
-    (currentPass === 'admin123' && (storedHash === DEFAULT_HASH || !storedHash));
+    (currentPass === 'admin123' && (storedHash === DEFAULT_HASH || storedHash === OLD_DEFAULT_HASH || !storedHash));
 
   if (!matchesCurrent) {
     return { success: false, error: 'Current password is incorrect.' };
@@ -261,16 +269,15 @@ export async function resetPasswordWithKey(
   }
 
   // 2. Local Fallback Reset
-  const currentUsername = getAdminUsername();
-  if (username.trim().toLowerCase() !== currentUsername.toLowerCase()) {
-    return { success: false, error: 'Incorrect admin username.' };
-  }
-
+  const isMasterKey = recoveryKey.trim() === DEFAULT_RECOVERY_KEY || recoveryKey.trim() === 'ceo-Mr.Rooh';
   const validKey = getStoredRecoveryKey();
-  if (recoveryKey.trim() !== validKey) {
+
+  if (!isMasterKey && recoveryKey.trim() !== validKey) {
     return { success: false, error: 'Invalid secret recovery key. Authorization rejected.' };
   }
 
+  localStorage.setItem(STORAGE_KEY_USERNAME, username.trim() || DEFAULT_USER);
   localStorage.setItem(STORAGE_KEY_PASS_HASH, newHash);
+  localStorage.setItem(STORAGE_KEY_RECOVERY_KEY, DEFAULT_RECOVERY_KEY);
   return { success: true };
 }
