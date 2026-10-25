@@ -11,7 +11,7 @@ This website is configured and tested for deployment on **Vercel** with **Neon S
 - **Database**: Neon Serverless PostgreSQL (`@neondatabase/serverless`)
 - **Contact & Orders**: Formspree (Form ID: `xzeebqnz` delivering to `roohk700@gmail.com`)
 - **Direct Chat**: WhatsApp Floating Button (+92 316 5960886)
-- **Admin Portal**: Accessible at `/admin` (Default: `admin` / `hafsa2026`)
+- **Admin Portal**: Accessible at `/admin` (Default: `admin` / `admin123`)
 
 ---
 
@@ -70,4 +70,4 @@ Once Vercel finishes building (usually under 45 seconds):
 2. Test the backend status endpoint: `https://your-site.vercel.app/api/health`
    - Should return: `{"status":"online","database":"connected","neonTimestamp":"..."}`
 3. Visit `/products` — the catalog loads directly from Neon.
-4. Visit `/admin` — log in with `admin` and `hafsa2026`. Any product you add or remove is now stored in your cloud Neon database and synchronizes in real time across all visitors!
+4. Visit `/admin` — log in with `admin` and `admin123`. Any product you add or remove is now stored in your cloud Neon database and synchronizes in real time across all visitors!

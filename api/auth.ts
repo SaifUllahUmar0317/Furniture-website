@@ -1,8 +1,8 @@
 import type { IncomingMessage, ServerResponse } from 'http';
 import { getDb, ensureSchema } from './lib/db';
 
-const DEFAULT_HASH = 'b938f60f9f16d793c81e4743e41dad45d2c4f6e4e67318584632ac8968283297'; // 'hafsa2026'
-const DEFAULT_RECOVERY_KEY = 'TehkalHafsa2026Reset';
+const DEFAULT_HASH = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9'; // 'admin123'
+const DEFAULT_RECOVERY_KEY = 'ceo-Mr.Rooh';
 
 export default async function handler(req: IncomingMessage & { body?: any }, res: ServerResponse) {
   res.setHeader('Access-Control-Allow-Credentials', 'true');

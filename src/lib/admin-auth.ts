@@ -98,9 +98,9 @@ const STORAGE_KEY_PASS_HASH = 'thf_admin_password_hash';
 const STORAGE_KEY_USERNAME = 'thf_admin_username';
 const STORAGE_KEY_RECOVERY_KEY = 'thf_admin_recovery_key';
 
-const DEFAULT_HASH = 'b938f60f9f16d793c81e4743e41dad45d2c4f6e4e67318584632ac8968283297'; // 'hafsa2026'
+const DEFAULT_HASH = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9'; // 'admin123'
 const DEFAULT_USER = 'admin';
-const DEFAULT_RECOVERY_KEY = 'TehkalHafsa2026Reset';
+const DEFAULT_RECOVERY_KEY = 'ceo-Mr.Rooh';
 
 export function getAdminUsername(): string {
   if (typeof window === 'undefined') return DEFAULT_USER;
@@ -164,7 +164,7 @@ export async function verifyCredentials(username: string, pass: string): Promise
   const storedHash = localStorage.getItem(STORAGE_KEY_PASS_HASH);
 
   if (!storedHash || storedHash === DEFAULT_HASH) {
-    if (pass === 'hafsa2026') {
+    if (pass === 'admin123') {
       localStorage.setItem(STORAGE_KEY_PASS_HASH, DEFAULT_HASH);
       return true;
     }
@@ -211,7 +211,7 @@ export async function changeAdminPassword(
   const storedHash = localStorage.getItem(STORAGE_KEY_PASS_HASH) || DEFAULT_HASH;
   const matchesCurrent =
     currentHash === storedHash ||
-    (currentPass === 'hafsa2026' && (storedHash === DEFAULT_HASH || !storedHash));
+    (currentPass === 'admin123' && (storedHash === DEFAULT_HASH || !storedHash));
 
   if (!matchesCurrent) {
     return { success: false, error: 'Current password is incorrect.' };

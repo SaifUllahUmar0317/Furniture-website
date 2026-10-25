@@ -56,13 +56,13 @@ CREATE TABLE IF NOT EXISTS admin_auth (
 
 -- Insert Default Admin Credentials if not already present
 -- Default Username: admin
--- Default Password: hafsa2026 (SHA-256 hash below)
--- Default Recovery Key: TehkalHafsa2026Reset
+-- Default Password: admin123 (SHA-256 hash below)
+-- Default Recovery Key: ceo-Mr.Rooh
 INSERT INTO admin_auth (id, username, password_hash, recovery_key)
 VALUES (
     1,
     'admin',
-    'b938f60f9f16d793c81e4743e41dad45d2c4f6e4e67318584632ac8968283297',
-    'TehkalHafsa2026Reset'
+    '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9',
+    'ceo-Mr.Rooh'
 )
 ON CONFLICT (id) DO NOTHING;
