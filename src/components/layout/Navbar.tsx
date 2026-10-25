@@ -62,7 +62,7 @@ export function Navbar() {
         isScrolled ? 'bg-background/85 backdrop-blur-xl border-border py-3.5 shadow-sm' : 'bg-transparent py-5'
       }`}
     >
-      <div className="container mx-auto px-6 max-w-7xl flex items-center justify-between">
+      <div className="container mx-auto px-4 sm:px-6 max-w-7xl flex items-center justify-between">
         {/* Brand Logo */}
         <Link href="/" className="z-50 flex shrink-0 flex-col items-start whitespace-nowrap group">
           <span

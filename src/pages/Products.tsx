@@ -48,30 +48,29 @@ export default function Products() {
     if (sortOrder === 'price-low') return result.sort((a, b) => a.price - b.price);
     if (sortOrder === 'price-high') return result.sort((a, b) => b.price - a.price);
     return result;
-  }, [activeCategory, searchQuery, sortOrder]);
+  }, [activeCategory, searchQuery, sortOrder, products]);
 
   return (
-    <div className="w-full pt-32 pb-24">
-      <div className="container mx-auto max-w-7xl px-6">
-        <FadeIn className="mb-12 text-center">
+    <div className="w-full pt-28 sm:pt-32 pb-16 sm:pb-24">
+      <div className="container mx-auto max-w-7xl px-4 sm:px-6">
+        <FadeIn className="mb-8 sm:mb-12 text-center">
           <span className="mb-4 block text-sm uppercase tracking-[0.3em] text-primary">Our Furniture</span>
-          <h1 className="mb-5 font-serif text-5xl text-foreground md:text-7xl">Furniture for Your Home</h1>
-          <p className="mx-auto max-w-2xl text-base leading-relaxed text-foreground/65 md:text-lg">
+          <h1 className="mb-4 sm:mb-5 font-serif text-4xl sm:text-5xl text-foreground md:text-7xl">Furniture for Your Home</h1>
+          <p className="mx-auto max-w-2xl text-sm sm:text-base leading-relaxed text-foreground/65 md:text-lg px-2">
             Browse our furniture and ask the workshop for a quote.
           </p>
         </FadeIn>
 
-
-
-        <div className="mb-7 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex gap-3 overflow-x-auto pb-2 lg:pb-0">
+        <div className="mb-6 sm:mb-7 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          {/* Category tabs — horizontally scrollable on mobile */}
+          <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-2 lg:pb-0 -mx-4 sm:-mx-0 px-4 sm:px-0">
             {productCategories.map((category) => (
               <button
                 key={category}
                 type="button"
                 onClick={() => setActiveCategory(category)}
                 aria-pressed={activeCategory === category}
-                className={`shrink-0 border-b px-1 py-2 text-xs uppercase tracking-[0.16em] transition-colors ${
+                className={`shrink-0 border-b px-1 py-2 text-xs uppercase tracking-[0.16em] transition-colors whitespace-nowrap ${
                   activeCategory === category
                     ? 'border-primary text-primary'
                     : 'border-transparent text-foreground/55 hover:text-foreground'
@@ -98,7 +97,7 @@ export default function Products() {
               <select
                 value={sortOrder}
                 onChange={(event) => setSortOrder(event.target.value as typeof sortOrder)}
-                className="bg-transparent py-3 text-sm text-foreground outline-none"
+                className="bg-transparent py-3 text-sm text-foreground outline-none flex-1"
                 aria-label="Sort products"
               >
                 <option value="featured">Featured</option>
@@ -109,12 +108,12 @@ export default function Products() {
           </div>
         </div>
 
-        <p className="mb-6 text-sm text-muted-foreground">
+        <p className="mb-4 sm:mb-6 text-sm text-muted-foreground">
           Showing {visibleProducts.length} {visibleProducts.length === 1 ? 'piece' : 'pieces'}
         </p>
 
         {visibleProducts.length > 0 ? (
-          <div className="grid grid-cols-1 gap-x-7 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-x-5 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 sm:gap-x-7 sm:gap-y-10">
             {visibleProducts.map((product, index) => (
               <FadeIn key={product.slug} delay={Math.min(index * 0.04, 0.2)}>
                 <article className="group flex h-full flex-col border border-border bg-card transition-colors hover:border-primary/40">
@@ -132,7 +131,7 @@ export default function Products() {
                     )}
                   </Link>
 
-                  <div className="flex flex-1 flex-col p-5">
+                  <div className="flex flex-1 flex-col p-4 sm:p-5">
                     <div className="mb-2 flex items-center justify-between gap-3">
                       <span className="text-xs uppercase tracking-[0.15em] text-primary">{product.category}</span>
                       <span
@@ -146,13 +145,13 @@ export default function Products() {
 
                     <Link
                       href={`/products/${product.slug}`}
-                      className="font-serif text-2xl leading-snug text-foreground transition-colors hover:text-primary min-h-[3.75rem] flex items-center line-clamp-2"
+                      className="font-serif text-xl sm:text-2xl leading-snug text-foreground transition-colors hover:text-primary min-h-[3.5rem] sm:min-h-[3.75rem] flex items-center line-clamp-2"
                       title={product.name}
                     >
                       {product.name}
                     </Link>
 
-                    <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 border-y border-border py-3 text-xs leading-relaxed min-h-[4.75rem] content-start">
+                    <div className="mt-3 sm:mt-4 grid grid-cols-2 gap-x-4 gap-y-2 border-y border-border py-3 text-xs leading-relaxed min-h-[4.5rem] sm:min-h-[4.75rem] content-start">
                       {product.specs.slice(0, 2).map((spec) => (
                         <div key={spec.label} className="min-w-0">
                           <span className="block uppercase tracking-widest text-muted-foreground truncate">{spec.label}</span>
@@ -162,13 +161,13 @@ export default function Products() {
                     </div>
 
                     {/* Bottom Area: mt-auto guarantees prices and buttons align on the exact same horizontal line */}
-                    <div className="mt-auto pt-5">
+                    <div className="mt-auto pt-4 sm:pt-5">
                       <div className="flex items-end justify-between gap-4">
                         <div>
                           <span className="block text-[0.65rem] uppercase tracking-widest text-muted-foreground">
                             {product.priceQualifier === 'starting' ? 'Starting Price' : 'Price'}
                           </span>
-                          <span className="mt-1 block text-xl font-medium text-foreground">
+                          <span className="mt-1 block text-lg sm:text-xl font-medium text-foreground">
                             {product.priceQualifier === 'starting' ? 'From ' : ''}
                             {formatPrice(product.price)}
                           </span>
@@ -184,7 +183,7 @@ export default function Products() {
                       <button
                         type="button"
                         onClick={() => setOrderProduct(product)}
-                        className="mt-4 w-full bg-primary px-5 py-3.5 text-xs font-medium uppercase tracking-[0.18em] text-primary-foreground transition-colors hover:bg-primary/90"
+                        className="mt-3 sm:mt-4 w-full bg-primary px-5 py-3 sm:py-3.5 text-xs font-medium uppercase tracking-[0.18em] text-primary-foreground transition-colors hover:bg-primary/90"
                       >
                         {product.stock === 'in-stock' ? 'Order Now' : 'Request Availability'}
                       </button>
@@ -195,8 +194,8 @@ export default function Products() {
             ))}
           </div>
         ) : (
-          <div className="border border-border bg-card px-6 py-16 text-center">
-            <h2 className="font-serif text-2xl text-foreground">No furniture found</h2>
+          <div className="border border-border bg-card px-6 py-12 sm:py-16 text-center">
+            <h2 className="font-serif text-xl sm:text-2xl text-foreground">No furniture found</h2>
             <p className="mt-2 text-sm text-muted-foreground">Try another search or choose a different category.</p>
             <button
               type="button"

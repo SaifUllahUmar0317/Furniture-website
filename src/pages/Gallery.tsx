@@ -13,7 +13,7 @@ const IMAGES = [
   { src: g1, className: "md:col-span-2 md:row-span-2 aspect-square md:aspect-auto" },
   { src: g2, className: "aspect-square" },
   { src: g3, className: "aspect-[3/4]" },
-  { src: hero, className: "md:col-span-2 aspect-[21/9]" },
+  { src: hero, className: "md:col-span-2 aspect-[16/9] md:aspect-[21/9]" },
   { src: g4, className: "aspect-square" },
   { src: g5, className: "aspect-square" },
 ];
@@ -21,17 +21,17 @@ const IMAGES = [
 export default function Gallery() {
   const [images] = useLiveGallery();
   return (
-    <div className="w-full pt-32 pb-20">
-      <div className="container mx-auto px-6 max-w-7xl">
-        <FadeIn className="text-center mb-24">
+    <div className="w-full pt-28 sm:pt-32 pb-16 sm:pb-20">
+      <div className="container mx-auto px-4 sm:px-6 max-w-7xl">
+        <FadeIn className="text-center mb-12 sm:mb-16 lg:mb-24">
           <span className="text-primary text-sm tracking-[0.3em] uppercase mb-4 block">Our Photos</span>
-          <h1 className="font-serif text-5xl md:text-7xl text-foreground mb-6">Gallery.</h1>
-          <p className="text-foreground/60 max-w-2xl mx-auto text-lg font-light">
+          <h1 className="font-serif text-4xl sm:text-5xl md:text-7xl text-foreground mb-4 sm:mb-6">Gallery.</h1>
+          <p className="text-foreground/60 max-w-2xl mx-auto text-base sm:text-lg font-light px-2">
             See furniture made in our workshop.
           </p>
         </FadeIn>
 
-        <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-4 md:auto-rows-[300px]">
+        <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 md:auto-rows-[300px]">
           {images.map((img, i) => (
             <StaggerItem key={i} className={`relative overflow-hidden group ${img.className}`}>
               <img 

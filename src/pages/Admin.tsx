@@ -241,8 +241,8 @@ export default function Admin() {
   // LOGIN SCREEN
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen pt-36 pb-20 flex items-center justify-center px-6">
-        <div className="w-full max-w-md bg-card border border-border p-8 md:p-12 shadow-2xl relative">
+      <div className="min-h-screen pt-28 sm:pt-36 pb-16 sm:pb-20 flex items-center justify-center px-4 sm:px-6">
+        <div className="w-full max-w-md bg-card border border-border p-6 sm:p-8 md:p-12 shadow-2xl relative">
           <div className="text-center mb-8">
             <div className="w-12 h-12 rounded-full border border-primary/30 bg-primary/5 flex items-center justify-center mx-auto mb-4">
               <ShieldCheck className="w-6 h-6 text-primary" />
@@ -326,7 +326,7 @@ export default function Admin() {
 
           {showResetModal && (
             <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-              <div className="bg-card border border-border w-full max-w-md p-6 md:p-8 relative shadow-2xl">
+              <div className="bg-card border border-border w-full max-w-md p-6 md:p-8 relative shadow-2xl max-h-[90vh] overflow-y-auto">
                 <button
                   type="button"
                   onClick={() => setShowResetModal(false)}
@@ -642,11 +642,11 @@ export default function Admin() {
         </div>
       )}
 
-      <div className="container mx-auto px-6 max-w-7xl">
+      <div className="container mx-auto px-4 sm:px-6 max-w-7xl">
         {/* Header Bar */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-border">
           <div>
-            <div className="flex items-center space-x-3">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
               <span className="text-primary text-xs uppercase tracking-[0.3em] font-medium">
                 Authorized Admin: {getAdminUsername()}
@@ -657,7 +657,7 @@ export default function Admin() {
             </h1>
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <button
               onClick={() => setActiveTab('security')}
               className={`flex items-center space-x-2 border px-4 py-2.5 text-xs uppercase tracking-wider transition-colors ${
@@ -1403,7 +1403,7 @@ export default function Admin() {
       {/* MODAL: EDIT/ADD PROJECT */}
       {editingProject && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-card border border-border w-full max-w-lg p-6 md:p-8 relative">
+          <div className="bg-card border border-border w-full max-w-lg p-6 md:p-8 relative max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setEditingProject(null)}
               className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"
@@ -1534,7 +1534,7 @@ export default function Admin() {
       {/* MODAL: EDIT/ADD GALLERY */}
       {editingGallery && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-card border border-border w-full max-w-md p-6 md:p-8 relative">
+          <div className="bg-card border border-border w-full max-w-md p-6 md:p-8 relative max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setEditingGallery(null)}
               className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"

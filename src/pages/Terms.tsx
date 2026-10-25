@@ -3,14 +3,14 @@ import { FadeIn } from '@/components/ui/fade-in';
 
 export default function Terms() {
   return (
-    <div className="w-full pt-32 pb-20 min-h-screen bg-background">
-      <div className="container mx-auto px-6 max-w-3xl">
-        <FadeIn className="mb-16 text-center">
-          <h1 className="font-serif text-4xl md:text-5xl text-foreground mb-6">Terms</h1>
-          <p className="text-foreground/50 text-sm tracking-widest uppercase">Last Updated: October 2023</p>
+    <div className="w-full pt-28 sm:pt-32 pb-16 sm:pb-20 min-h-screen bg-background">
+      <div className="container mx-auto px-4 sm:px-6 max-w-3xl">
+        <FadeIn className="mb-10 sm:mb-16 text-center">
+          <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl text-foreground mb-4 sm:mb-6">Terms</h1>
+          <p className="text-foreground/50 text-xs sm:text-sm tracking-widest uppercase">Last Updated: October 2023</p>
         </FadeIn>
 
-        <FadeIn delay={0.2} className="prose prose-p:text-foreground/70 prose-headings:text-foreground prose-headings:font-serif prose-a:text-primary dark:prose-invert max-w-none">
+        <FadeIn delay={0.2} className="prose prose-p:text-foreground/70 prose-headings:text-foreground prose-headings:font-serif prose-a:text-primary dark:prose-invert max-w-none text-sm sm:text-base leading-relaxed">
           <p>
             If you use our services or order custom furniture, you agree to these terms.
           </p>

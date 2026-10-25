@@ -7,38 +7,38 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative border-t border-border bg-background pt-24 pb-12 overflow-hidden">
+    <footer className="relative border-t border-border bg-background pt-16 sm:pt-20 lg:pt-24 pb-10 sm:pb-12 overflow-hidden">
       {/* Decorative large text */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center pointer-events-none opacity-[0.02] z-0">
         <span className="font-serif text-[15vw] whitespace-nowrap tracking-tighter">TEHKAL HAFSA</span>
       </div>
 
-      <div className="container mx-auto px-6 max-w-7xl relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-20">
+      <div className="container mx-auto px-4 sm:px-6 max-w-7xl relative z-10">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-12 lg:gap-16 mb-12 sm:mb-16 lg:mb-20">
           
-          {/* Brand */}
-          <div className="flex flex-col space-y-6">
+          {/* Brand — full width on mobile */}
+          <div className="col-span-2 lg:col-span-1 flex flex-col space-y-4 sm:space-y-6">
             <Link
               href="/"
               onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' })}
               className="flex flex-col items-start group inline-block"
             >
-              <span className="font-serif text-3xl tracking-widest uppercase text-foreground">
+              <span className="font-serif text-2xl sm:text-3xl tracking-widest uppercase text-foreground">
                 Tehkal Hafsa
               </span>
               <span className="font-sans text-[0.7rem] tracking-[0.3em] text-primary uppercase mt-1">
                 Furniture
               </span>
             </Link>
-            <p className="text-foreground/60 text-sm leading-relaxed mt-4">
+            <p className="text-foreground/60 text-sm leading-relaxed mt-2 sm:mt-4">
               We make custom furniture and interiors in Peshawar. We have been doing this for over 10 years.
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-serif text-xl mb-6 text-foreground tracking-wide">Explore</h4>
-            <ul className="space-y-4">
+            <h4 className="font-serif text-lg sm:text-xl mb-4 sm:mb-6 text-foreground tracking-wide">Explore</h4>
+            <ul className="space-y-3 sm:space-y-4">
               {['Home', 'About', 'Services', 'Products', 'Projects'].map((link) => (
                 <li key={link}>
                   <Link
@@ -55,8 +55,8 @@ export function Footer() {
 
           {/* Legal / More */}
           <div>
-            <h4 className="font-serif text-xl mb-6 text-foreground tracking-wide">Information</h4>
-            <ul className="space-y-4">
+            <h4 className="font-serif text-lg sm:text-xl mb-4 sm:mb-6 text-foreground tracking-wide">Information</h4>
+            <ul className="space-y-3 sm:space-y-4">
               {[
                 { label: 'Gallery', path: '/gallery' },
                 { label: 'Why Choose Us', path: '/why-us' },
@@ -80,49 +80,49 @@ export function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="font-serif text-xl mb-6 text-foreground tracking-wide">Contact</h4>
-            <ul className="space-y-6">
-              <li className="flex items-start space-x-4">
-                <MapPin className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+            <h4 className="font-serif text-lg sm:text-xl mb-4 sm:mb-6 text-foreground tracking-wide">Contact</h4>
+            <ul className="space-y-4 sm:space-y-6">
+              <li className="flex items-start space-x-3 sm:space-x-4">
+                <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-primary shrink-0 mt-0.5" />
                 <span className="text-foreground/60 text-sm leading-relaxed">
                   University Road, Tehkal Bala, Tambowano Morh,<br />Peshawar, Pakistan
                 </span>
               </li>
-              <li className="flex items-center space-x-4">
-                <Mail className="w-5 h-5 text-primary shrink-0" />
-                <a href="mailto:Roohk700@gmail.com" className="text-foreground/60 hover:text-primary transition-colors text-sm">
+              <li className="flex items-center space-x-3 sm:space-x-4">
+                <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-primary shrink-0" />
+                <a href="mailto:Roohk700@gmail.com" className="text-foreground/60 hover:text-primary transition-colors text-sm break-all">
                   Roohk700@gmail.com
                 </a>
               </li>
             </ul>
 
-            <div className="mt-8 flex items-center space-x-4">
+            <div className="mt-6 sm:mt-8 flex items-center space-x-3 sm:space-x-4">
               <a
                 href="https://www.facebook.com/marketplace/profile/100090837791388"
                 target="_blank"
                 rel="noreferrer"
-                className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-foreground/60 hover:border-primary hover:text-primary hover:bg-primary/5 transition-all duration-300"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-border flex items-center justify-center text-foreground/60 hover:border-primary hover:text-primary hover:bg-primary/5 transition-all duration-300"
               >
-                <Facebook size={18} />
+                <Facebook size={16} />
               </a>
               <a
                 href="https://www.tiktok.com/@tehkalhafsafurniture"
                 target="_blank"
                 rel="noreferrer"
-                className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-foreground/60 hover:border-primary hover:text-primary hover:bg-primary/5 transition-all duration-300"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-border flex items-center justify-center text-foreground/60 hover:border-primary hover:text-primary hover:bg-primary/5 transition-all duration-300"
               >
-                <FaTiktok size={18} />
+                <FaTiktok size={16} />
               </a>
             </div>
           </div>
 
         </div>
 
-        <div className="pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between">
-          <p className="text-foreground/40 text-xs tracking-widest uppercase">
+        <div className="pt-6 sm:pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0">
+          <p className="text-foreground/40 text-xs tracking-widest uppercase text-center sm:text-left">
             &copy; {currentYear} Tehkal Hafsa Furniture. All rights reserved.
           </p>
-          <p className="text-foreground/40 text-xs tracking-widest uppercase mt-4 md:mt-0">
+          <p className="text-foreground/40 text-xs tracking-widest uppercase">
             Made in Peshawar
           </p>
         </div>

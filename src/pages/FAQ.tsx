@@ -33,26 +33,26 @@ export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <div className="w-full pt-32 pb-20 min-h-screen">
-      <div className="container mx-auto px-6 max-w-4xl">
-        <FadeIn className="text-center mb-20">
+    <div className="w-full pt-28 sm:pt-32 pb-16 sm:pb-20 min-h-screen">
+      <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
+        <FadeIn className="text-center mb-12 sm:mb-16 lg:mb-20">
           <span className="text-primary text-sm tracking-[0.3em] uppercase mb-4 block">Questions</span>
-          <h1 className="font-serif text-5xl md:text-7xl text-foreground mb-6">Common Questions</h1>
+          <h1 className="font-serif text-4xl sm:text-5xl md:text-7xl text-foreground mb-4 sm:mb-6">Common Questions</h1>
         </FadeIn>
 
-        <StaggerContainer className="space-y-4">
+        <StaggerContainer className="space-y-3 sm:space-y-4">
           {FAQS.map((faq, i) => (
             <StaggerItem key={i}>
               <div className="border border-foreground/10 bg-foreground/[0.02]">
                 <button
-                  className="w-full text-left p-6 md:p-8 flex items-center justify-between focus:outline-none"
+                  className="w-full text-left p-5 sm:p-6 md:p-8 flex items-center justify-between gap-4 focus:outline-none"
                   onClick={() => setOpenIndex(openIndex === i ? null : i)}
                 >
-                  <h3 className={`font-serif text-xl md:text-2xl transition-colors ${openIndex === i ? 'text-primary' : 'text-foreground'}`}>
+                  <h3 className={`font-serif text-lg sm:text-xl md:text-2xl transition-colors ${openIndex === i ? 'text-primary' : 'text-foreground'}`}>
                     {faq.q}
                   </h3>
-                  <div className="ml-6 shrink-0 text-foreground/50">
-                    {openIndex === i ? <Minus className="w-6 h-6" /> : <Plus className="w-6 h-6" />}
+                  <div className="shrink-0 text-foreground/50">
+                    {openIndex === i ? <Minus className="w-5 h-5 sm:w-6 sm:h-6" /> : <Plus className="w-5 h-5 sm:w-6 sm:h-6" />}
                   </div>
                 </button>
                 <div 
@@ -60,7 +60,7 @@ export default function FAQ() {
                     openIndex === i ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                   }`}
                 >
-                  <p className="px-6 md:px-8 pb-8 text-foreground/60 font-light leading-relaxed">
+                  <p className="px-5 sm:px-6 md:px-8 pb-6 sm:pb-8 text-foreground/60 font-light leading-relaxed text-sm sm:text-base">
                     {faq.a}
                   </p>
                 </div>
