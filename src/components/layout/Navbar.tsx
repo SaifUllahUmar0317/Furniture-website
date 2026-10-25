@@ -71,15 +71,34 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
+
           <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             className={`shrink-0 p-2 transition-colors focus:outline-none ${
               isLightHero ? 'text-[#FAF7EF]/85 hover:text-[#C6A45C]' : 'text-foreground/70 hover:text-primary'
             }`}
             aria-label="Toggle Theme"
+            title="Toggle theme"
           >
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
+
+          {/* Admin Portal Button */}
+          <Link
+            href="/admin"
+            title="Admin Management Portal"
+            className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 border text-[0.7rem] tracking-[0.12em] uppercase transition-all duration-300 xl:text-xs ${
+              location === '/admin'
+                ? 'border-primary bg-primary text-primary-foreground font-semibold'
+                : isLightHero
+                ? 'border-[#FAF7EF]/40 text-[#FAF7EF] hover:border-[#C6A45C] hover:text-[#C6A45C]'
+                : 'border-border text-foreground/80 hover:border-primary hover:text-primary'
+            }`}
+          >
+            <Shield size={14} className="text-primary" />
+            <span>Admin</span>
+          </Link>
+
           <Link
             href="/contact"
             className={`shrink-0 whitespace-nowrap px-4 py-2.5 text-xs uppercase tracking-[0.1em] transition-all duration-500 2xl:px-6 ${
@@ -92,21 +111,31 @@ export function Navbar() {
           </Link>
         </nav>
 
-        {/* Mobile Toggle */}
-        <div className="flex items-center space-x-4 lg:hidden z-50">
+        {/* Mobile Toggle & Admin Link */}
+        <div className="flex items-center space-x-3 lg:hidden z-50">
+          <Link
+            href="/admin"
+            className={`p-1.5 transition-colors ${
+              location === '/admin' ? 'text-primary' : isLightHero && !mobileMenuOpen ? 'text-[#FAF7EF]/85' : 'text-foreground/70'
+            }`}
+            title="Admin Portal"
+            aria-label="Admin Portal"
+          >
+            <Shield size={20} />
+          </Link>
           <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className={`transition-colors focus:outline-none ${
+            className={`p-1.5 transition-colors focus:outline-none ${
               isLightHero && !mobileMenuOpen
                 ? 'text-[#FAF7EF]/85 hover:text-[#C6A45C]'
                 : 'text-foreground/70 hover:text-primary'
             }`}
             aria-label="Toggle Theme"
           >
-            {theme === 'dark' ? <Sun size={24} /> : <Moon size={24} />}
+            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
           </button>
           <button
-            className={`transition-colors ${
+            className={`p-1.5 transition-colors ${
               isLightHero && !mobileMenuOpen
                 ? 'text-[#FAF7EF] hover:text-[#C6A45C]'
                 : 'text-foreground hover:text-primary'
@@ -114,7 +143,7 @@ export function Navbar() {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle Menu"
           >
-            {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+            {mobileMenuOpen ? <X size={26} /> : <Menu size={26} />}
           </button>
         </div>
       </div>
@@ -141,6 +170,18 @@ export function Navbar() {
                   {link.label}
                 </Link>
               ))}
+
+              {/* Admin Link in Mobile Drawer */}
+              <Link
+                href="/admin"
+                className={`flex items-center gap-3 font-serif text-3xl tracking-wide pt-4 border-t border-border ${
+                  location === '/admin' ? 'text-primary' : 'text-primary/80'
+                }`}
+              >
+                <Shield size={24} />
+                <span>Admin Portal</span>
+              </Link>
+
               <div className="pt-8 mt-auto">
                 <Link
                   href="/contact"

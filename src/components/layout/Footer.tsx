@@ -58,6 +58,7 @@ export function Footer() {
                 { label: 'Questions', path: '/faq' },
                 { label: 'Privacy Policy', path: '/privacy' },
                 { label: 'Terms', path: '/terms' },
+                { label: 'Admin Portal', path: '/admin' },
               ].map((item) => (
                 <li key={item.path}>
                   <Link
