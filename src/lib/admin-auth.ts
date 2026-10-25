@@ -225,15 +225,32 @@ export async function changeAdminPassword(
   return { success: true };
 }
 
-export async function resetPasswordWithKey(
-  username: string,
-  recoveryKey: string,
-  newPassword: string
-): Promise<{ success: boolean; error?: string }> {
+export async function resetPasswordWithCredentials({
+  username,
+  oldPassword,
+  recoveryKey,
+  newPassword,
+}: {
+  username?: string;
+  oldPassword?: string;
+  recoveryKey?: string;
+  newPassword: string;
+}): Promise<{ success: boolean; error?: string }> {
   if (!newPassword || newPassword.length < 6) {
     return { success: false, error: 'New password must be at least 6 characters long.' };
   }
 
+  const trimmedKey = recoveryKey?.trim() || '';
+  const trimmedOldPass = oldPassword?.trim() || '';
+
+  if (!trimmedKey && !trimmedOldPass) {
+    return {
+      success: false,
+      error: 'Please enter either your current/old password OR your secret recovery key.',
+    };
+  }
+
+  const currentPasswordHash = trimmedOldPass ? await hashPassword(trimmedOldPass) : undefined;
   const newHash = await hashPassword(newPassword);
 
   // 1. Cloud Reset in Neon Database
@@ -244,14 +261,18 @@ export async function resetPasswordWithKey(
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         action: 'reset_password',
-        recoveryKey: recoveryKey.trim(),
+        recoveryKey: trimmedKey || undefined,
+        currentPasswordHash,
         newPasswordHash: newHash,
       }),
     });
     serverReachable = true;
     const data = await res.json().catch(() => null);
     if (!res.ok || (data && !data.success)) {
-      return { success: false, error: data?.error || 'Invalid secret recovery key.' };
+      return {
+        success: false,
+        error: data?.error || 'Verification failed. Please check your old password or recovery key.',
+      };
     }
     if (data && data.success) {
       localStorage.setItem(STORAGE_KEY_PASS_HASH, newHash);
@@ -269,17 +290,28 @@ export async function resetPasswordWithKey(
   }
 
   // 2. Local Fallback Reset
-  const isMasterKey = recoveryKey.trim() === DEFAULT_RECOVERY_KEY || recoveryKey.trim() === 'ceo-Mr.Rooh';
+  const isMasterKey = trimmedKey === DEFAULT_RECOVERY_KEY || trimmedKey === 'ceo-Mr.Rooh';
   const validKey = getStoredRecoveryKey();
+  const storedHash = localStorage.getItem(STORAGE_KEY_PASS_HASH) || DEFAULT_HASH;
 
-  if (!isMasterKey && recoveryKey.trim() !== validKey) {
-    return { success: false, error: 'Invalid secret recovery key. Authorization rejected.' };
+  const keyMatches = trimmedKey && (isMasterKey || trimmedKey === validKey);
+  const passMatches = currentPasswordHash && currentPasswordHash === storedHash;
+
+  if (!keyMatches && !passMatches) {
+    return { success: false, error: 'Invalid current password or secret recovery key.' };
   }
 
-  localStorage.setItem(STORAGE_KEY_USERNAME, username.trim() || DEFAULT_USER);
+  localStorage.setItem(STORAGE_KEY_USERNAME, username?.trim() || DEFAULT_USER);
   localStorage.setItem(STORAGE_KEY_PASS_HASH, newHash);
-  localStorage.setItem(STORAGE_KEY_RECOVERY_KEY, DEFAULT_RECOVERY_KEY);
   return { success: true };
+}
+
+export async function resetPasswordWithKey(
+  username: string,
+  recoveryKey: string,
+  newPassword: string
+): Promise<{ success: boolean; error?: string }> {
+  return resetPasswordWithCredentials({ username, recoveryKey, newPassword });
 }
 
 export async function updateRecoveryKeyCloud(newKey: string): Promise<{ success: boolean; error?: string }> {
