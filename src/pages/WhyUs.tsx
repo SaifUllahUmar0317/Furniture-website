@@ -1,7 +1,7 @@
 import React from 'react';
 import { FadeIn, StaggerContainer, StaggerItem } from '@/components/ui/fade-in';
 import { Award, Clock, ShieldCheck, Leaf } from 'lucide-react';
-import aboutImg from '@assets/generated_images/about.jpg';
+import aboutImg from '@assets/generated_images/owner_about.jpg';
 
 export default function WhyUs() {
   const reasons = [
@@ -55,9 +55,18 @@ export default function WhyUs() {
           </StaggerContainer>
           
           <FadeIn direction="left">
-            <div className="relative aspect-[3/4] overflow-hidden">
-              <img src={aboutImg} alt="Furniture being made" className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-60" />
+            <div className="relative aspect-[3/4] overflow-hidden rounded-sm group shadow-2xl">
+              <img
+                src={aboutImg}
+                alt="Tehkal Hafsa Furniture owner and master craftsman at workshop"
+                className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute bottom-0 left-0 right-0 p-6 pointer-events-none">
+                <p className="text-white/95 font-serif text-xl leading-snug">Handcrafted in Peshawar</p>
+                <p className="text-white/60 text-xs uppercase tracking-widest mt-1">Direct from Our Workshop</p>
+              </div>
+              <div className="absolute top-4 left-4 right-4 bottom-4 border border-primary/30 pointer-events-none" />
             </div>
           </FadeIn>
         </div>

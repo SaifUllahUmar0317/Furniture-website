@@ -3,7 +3,7 @@ import { Link } from 'wouter';
 import { FadeIn, StaggerContainer, StaggerItem } from '@/components/ui/fade-in';
 import { ArrowRight } from 'lucide-react';
 import heroImg from '@assets/generated_images/hero.jpg';
-import aboutImg from '@assets/generated_images/about.jpg';
+import aboutImg from '@assets/generated_images/owner_about.jpg';
 import diningImg from '@assets/generated_images/dining.jpg';
 import project1Img from '@assets/generated_images/project1.jpg';
 import sofaImg from '@assets/generated_images/sofa.jpg';
@@ -82,7 +82,11 @@ export default function Home() {
             <div className="relative">
               <FadeIn direction="left">
                 <div className="relative aspect-[4/5] w-full overflow-hidden">
-                  <img src={aboutImg} alt="Furniture being made" className="w-full h-full object-cover" />
+                  <img
+                    src={aboutImg}
+                    alt="Master craftsman at Tehkal Hafsa Furniture workshop"
+                    className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                  />
                   <div className="absolute inset-0 border border-border" />
                 </div>
                 <div className="absolute -bottom-10 -left-10 bg-card p-8 border border-border shadow-2xl glass-panel hidden md:block">
