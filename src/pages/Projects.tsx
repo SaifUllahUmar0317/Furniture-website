@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLiveProjects } from '@/lib/admin-store';
 import { FadeIn, StaggerContainer, StaggerItem } from '@/components/ui/fade-in';
 import { Link } from 'wouter';
 
@@ -31,6 +32,7 @@ const PROJECTS = [
 ];
 
 export default function Projects() {
+  const [projects] = useLiveProjects();
   return (
     <div className="w-full pt-32 pb-20">
       <div className="container mx-auto px-6 max-w-7xl">
@@ -40,7 +42,7 @@ export default function Projects() {
         </FadeIn>
 
         <StaggerContainer className="space-y-32">
-          {PROJECTS.map((project, index) => (
+          {projects.map((project, index) => (
             <StaggerItem key={project.id} className={`flex flex-col gap-12 lg:gap-20 items-center ${index % 2 !== 0 ? 'lg:flex-row-reverse' : 'lg:flex-row'}`}>
               <div className="w-full lg:w-3/5">
                 <div className="relative aspect-[16/9] overflow-hidden group">

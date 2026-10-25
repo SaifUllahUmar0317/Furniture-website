@@ -3,7 +3,8 @@ import { Link, useSearch } from 'wouter';
 import { ArrowRight, Search } from 'lucide-react';
 import { FadeIn } from '@/components/ui/fade-in';
 import { OrderFormDialog } from '@/components/products/OrderFormDialog';
-import { formatPrice, productCategories, products, type Product } from '@/data/products';
+import { formatPrice, productCategories, type Product } from '@/data/products';
+import { useLiveProducts } from '@/lib/admin-store';
 
 const CATEGORY_SLUGS: Record<string, string> = {
   'living-room': 'Living Room',
@@ -19,6 +20,7 @@ const CATEGORY_SLUGS: Record<string, string> = {
 };
 
 export default function Products() {
+  const [products] = useLiveProducts();
   const searchParams = useSearch();
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');

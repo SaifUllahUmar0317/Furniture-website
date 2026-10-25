@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLiveGallery } from '@/lib/admin-store';
 import { FadeIn, StaggerContainer, StaggerItem } from '@/components/ui/fade-in';
 
 import g1 from '@assets/generated_images/gallery1.jpg';
@@ -18,6 +19,7 @@ const IMAGES = [
 ];
 
 export default function Gallery() {
+  const [images] = useLiveGallery();
   return (
     <div className="w-full pt-32 pb-20">
       <div className="container mx-auto px-6 max-w-7xl">
@@ -30,7 +32,7 @@ export default function Gallery() {
         </FadeIn>
 
         <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-4 md:auto-rows-[300px]">
-          {IMAGES.map((img, i) => (
+          {images.map((img, i) => (
             <StaggerItem key={i} className={`relative overflow-hidden group ${img.className}`}>
               <img 
                 src={img.src} 

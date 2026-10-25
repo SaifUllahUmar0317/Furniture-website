@@ -4,9 +4,11 @@ import { ArrowLeft, ArrowRight, Check, X } from 'lucide-react';
 import { FadeIn } from '@/components/ui/fade-in';
 import { OrderFormDialog } from '@/components/products/OrderFormDialog';
 import NotFound from '@/pages/not-found';
-import { formatPrice, products } from '@/data/products';
+import { formatPrice } from '@/data/products';
+import { useLiveProducts } from '@/lib/admin-store';
 
 export default function ProductDetail() {
+  const [products] = useLiveProducts();
   const { slug } = useParams<{ slug: string }>();
   const [orderOpen, setOrderOpen] = useState(false);
   const product = products.find((item) => item.slug === slug);
