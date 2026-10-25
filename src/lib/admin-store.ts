@@ -67,7 +67,6 @@ const PRODUCTS_KEY = 'thf_admin_products';
 const PROJECTS_KEY = 'thf_admin_projects';
 const GALLERY_KEY = 'thf_admin_gallery';
 
-// Listeners for multi-component reactive sync
 type Listener = () => void;
 const listeners = new Set<Listener>();
 
@@ -123,11 +122,80 @@ export function saveStoredGallery(items: GalleryItem[]) {
   notify();
 }
 
-// React hooks for live reactive updates
+// Global Cloud Sync from Neon via Vercel Serverless Functions
+let hasSyncedFromCloud = false;
+
+export async function syncFromCloud() {
+  if (hasSyncedFromCloud || typeof window === 'undefined') return;
+  hasSyncedFromCloud = true;
+
+  try {
+    // 1. Sync Products
+    const prodRes = await fetch('/api/products');
+    if (prodRes.ok) {
+      const json = await prodRes.json();
+      if (Array.isArray(json.data) && json.data.length > 0) {
+        const mapped: Product[] = json.data.map((item: any) => ({
+          id: item.id,
+          slug: item.slug,
+          name: item.name,
+          category: item.category,
+          price: Number(item.price),
+          priceQualifier: item.price_qualifier || item.priceQualifier || 'fixed',
+          image: item.image,
+          description: item.description,
+          stock: item.stock || 'in-stock',
+          badge: item.badge,
+          specs: Array.isArray(item.specs) ? item.specs : [],
+        }));
+        localStorage.setItem(PRODUCTS_KEY, JSON.stringify(mapped));
+        notify();
+      }
+    }
+
+    // 2. Sync Projects
+    const projRes = await fetch('/api/projects');
+    if (projRes.ok) {
+      const json = await projRes.json();
+      if (Array.isArray(json.data) && json.data.length > 0) {
+        const mapped: ProjectItem[] = json.data.map((item: any) => ({
+          id: item.id,
+          title: item.title,
+          type: item.type,
+          desc: item.description || item.desc || '',
+          img: item.img,
+        }));
+        localStorage.setItem(PROJECTS_KEY, JSON.stringify(mapped));
+        notify();
+      }
+    }
+
+    // 3. Sync Gallery
+    const galRes = await fetch('/api/gallery');
+    if (galRes.ok) {
+      const json = await galRes.json();
+      if (Array.isArray(json.data) && json.data.length > 0) {
+        const mapped: GalleryItem[] = json.data.map((item: any) => ({
+          id: item.id,
+          title: item.title,
+          src: item.src,
+          className: item.class_name || item.className,
+        }));
+        localStorage.setItem(GALLERY_KEY, JSON.stringify(mapped));
+        notify();
+      }
+    }
+  } catch {
+    // Seamless fallback to local data
+  }
+}
+
+// React hooks for live reactive updates with background cloud synchronization
 export function useLiveProducts(): [Product[], (items: Product[]) => void] {
   const [data, setData] = useState<Product[]>(getStoredProducts);
 
   useEffect(() => {
+    syncFromCloud();
     const handler = () => setData(getStoredProducts());
     listeners.add(handler);
     window.addEventListener('storage', handler);
@@ -144,6 +212,7 @@ export function useLiveProjects(): [ProjectItem[], (items: ProjectItem[]) => voi
   const [data, setData] = useState<ProjectItem[]>(getStoredProjects);
 
   useEffect(() => {
+    syncFromCloud();
     const handler = () => setData(getStoredProjects());
     listeners.add(handler);
     window.addEventListener('storage', handler);
@@ -160,6 +229,7 @@ export function useLiveGallery(): [GalleryItem[], (items: GalleryItem[]) => void
   const [data, setData] = useState<GalleryItem[]>(getStoredGallery);
 
   useEffect(() => {
+    syncFromCloud();
     const handler = () => setData(getStoredGallery());
     listeners.add(handler);
     window.addEventListener('storage', handler);

@@ -12,10 +12,7 @@ const STORAGE_KEY_PASS_HASH = 'thf_admin_password_hash';
 const STORAGE_KEY_USERNAME = 'thf_admin_username';
 const STORAGE_KEY_RECOVERY_KEY = 'thf_admin_recovery_key';
 
-// Default initial credentials (hashed):
-// Default Password: "hafsa2026"
-// SHA-256 for "hafsa2026": b938f60f9f16d793c81e4743e41dad45d2c4f6e4e67318584632ac8968283297
-const DEFAULT_HASH = 'b938f60f9f16d793c81e4743e41dad45d2c4f6e4e67318584632ac8968283297';
+const DEFAULT_HASH = 'b938f60f9f16d793c81e4743e41dad45d2c4f6e4e67318584632ac8968283297'; // 'hafsa2026'
 const DEFAULT_USER = 'admin';
 const DEFAULT_RECOVERY_KEY = 'TehkalHafsa2026Reset';
 
@@ -49,6 +46,30 @@ export function setStoredRecoveryKey(key: string): void {
 }
 
 export async function verifyCredentials(username: string, pass: string): Promise<boolean> {
+  const inputHash = await hashPassword(pass);
+
+  // 1. Try Cloud Verification via Neon API
+  try {
+    const res = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'verify', username, passwordHash: inputHash }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (typeof data.success === 'boolean') {
+        if (data.success) {
+          localStorage.setItem(STORAGE_KEY_USERNAME, username.trim());
+          localStorage.setItem(STORAGE_KEY_PASS_HASH, inputHash);
+        }
+        return data.success;
+      }
+    }
+  } catch {
+    // Fall back to local check
+  }
+
+  // 2. Client fallback verification
   const currentUsername = getAdminUsername();
   if (username.trim().toLowerCase() !== currentUsername.toLowerCase()) {
     return false;
@@ -56,16 +77,14 @@ export async function verifyCredentials(username: string, pass: string): Promise
 
   const storedHash = localStorage.getItem(STORAGE_KEY_PASS_HASH);
 
-  // If no password has been customized yet:
-  if (!storedHash || storedHash === DEFAULT_HASH || storedHash === 'b0d69116e0ca584fe3be98aa45f3df05bf9be18d363d596bb051fc9bb759d57a') {
+  if (!storedHash || storedHash === DEFAULT_HASH) {
     if (pass === 'hafsa2026') {
       localStorage.setItem(STORAGE_KEY_PASS_HASH, DEFAULT_HASH);
       return true;
     }
   }
 
-  const inputHash = await hashPassword(pass);
-  return inputHash === storedHash || (inputHash === DEFAULT_HASH && (!storedHash || storedHash === 'b0d69116e0ca584fe3be98aa45f3df05bf9be18d363d596bb051fc9bb759d57a'));
+  return inputHash === storedHash || (inputHash === DEFAULT_HASH && !storedHash);
 }
 
 export async function changeAdminPassword(
@@ -77,20 +96,42 @@ export async function changeAdminPassword(
     return { success: false, error: 'New password must be at least 6 characters long.' };
   }
 
-  const storedHash = localStorage.getItem(STORAGE_KEY_PASS_HASH) || DEFAULT_HASH;
   const currentHash = await hashPassword(currentPass);
+  const newHash = await hashPassword(newPass);
 
+  // 1. Try Cloud Update
+  try {
+    const res = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'change_password',
+        currentPasswordHash: currentHash,
+        newPasswordHash: newHash,
+        newUsername,
+      }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (!data.success && data.error) {
+        return { success: false, error: data.error };
+      }
+    }
+  } catch {
+    // Fall back to local update
+  }
+
+  // 2. Local Update
+  const storedHash = localStorage.getItem(STORAGE_KEY_PASS_HASH) || DEFAULT_HASH;
   const matchesCurrent =
     currentHash === storedHash ||
-    (currentPass === 'hafsa2026' && (storedHash === DEFAULT_HASH || storedHash === 'b0d69116e0ca584fe3be98aa45f3df05bf9be18d363d596bb051fc9bb759d57a'));
+    (currentPass === 'hafsa2026' && (storedHash === DEFAULT_HASH || !storedHash));
 
   if (!matchesCurrent) {
     return { success: false, error: 'Current password is incorrect.' };
   }
 
-  const newHash = await hashPassword(newPass);
   localStorage.setItem(STORAGE_KEY_PASS_HASH, newHash);
-
   if (newUsername && newUsername.trim()) {
     localStorage.setItem(STORAGE_KEY_USERNAME, newUsername.trim());
   }
@@ -98,15 +139,42 @@ export async function changeAdminPassword(
   return { success: true };
 }
 
-/**
- * Secure password reset with Secret Recovery Key.
- * Verifies username and secret key without ever exposing secrets to public viewers.
- */
 export async function resetPasswordWithKey(
   username: string,
   recoveryKey: string,
   newPassword: string
 ): Promise<{ success: boolean; error?: string }> {
+  if (!newPassword || newPassword.length < 6) {
+    return { success: false, error: 'New password must be at least 6 characters long.' };
+  }
+
+  const newHash = await hashPassword(newPassword);
+
+  // 1. Try Cloud Reset
+  try {
+    const res = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'reset_password',
+        recoveryKey,
+        newPasswordHash: newHash,
+      }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success) {
+        localStorage.setItem(STORAGE_KEY_PASS_HASH, newHash);
+        return { success: true };
+      } else if (data.error) {
+        return { success: false, error: data.error };
+      }
+    }
+  } catch {
+    // Fall back to local reset
+  }
+
+  // 2. Local Fallback Reset
   const currentUsername = getAdminUsername();
   if (username.trim().toLowerCase() !== currentUsername.toLowerCase()) {
     return { success: false, error: 'Incorrect admin username.' };
@@ -117,11 +185,6 @@ export async function resetPasswordWithKey(
     return { success: false, error: 'Invalid secret recovery key. Authorization rejected.' };
   }
 
-  if (!newPassword || newPassword.length < 6) {
-    return { success: false, error: 'New password must be at least 6 characters long.' };
-  }
-
-  const newHash = await hashPassword(newPassword);
   localStorage.setItem(STORAGE_KEY_PASS_HASH, newHash);
   return { success: true };
 }

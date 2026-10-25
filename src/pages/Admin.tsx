@@ -508,9 +508,19 @@ export default function Admin() {
       const toAdd: Product = { ...editingProduct, id: newId, slug };
       setProducts([toAdd, ...products]);
       showToast('Product added successfully!');
+      fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(toAdd),
+      }).catch(() => {});
     } else {
       setProducts(products.map((p) => (p.id === editingProduct.id ? editingProduct : p)));
       showToast('Product updated successfully!');
+      fetch('/api/products', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editingProduct),
+      }).catch(() => {});
     }
     setEditingProduct(null);
   };
@@ -533,11 +543,22 @@ export default function Admin() {
 
     if (isNewProject) {
       const newId = projects.length ? Math.max(...projects.map((p) => p.id)) + 1 : 1;
-      setProjects([ ...projects, { ...editingProject, id: newId } ]);
+      const toAdd = { ...editingProject, id: newId };
+      setProjects([ ...projects, toAdd ]);
       showToast('Project created successfully!');
+      fetch('/api/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(toAdd),
+      }).catch(() => {});
     } else {
       setProjects(projects.map((p) => (p.id === editingProject.id ? editingProject : p)));
       showToast('Project updated successfully!');
+      fetch('/api/projects', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editingProject),
+      }).catch(() => {});
     }
     setEditingProject(null);
   };
@@ -560,11 +581,22 @@ export default function Admin() {
 
     if (isNewGallery) {
       const newId = gallery.length ? Math.max(...gallery.map((g) => g.id)) + 1 : 1;
-      setGallery([ { ...editingGallery, id: newId }, ...gallery ]);
+      const toAdd = { ...editingGallery, id: newId };
+      setGallery([ toAdd, ...gallery ]);
       showToast('Photo added to gallery!');
+      fetch('/api/gallery', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(toAdd),
+      }).catch(() => {});
     } else {
       setGallery(gallery.map((g) => (g.id === editingGallery.id ? editingGallery : g)));
       showToast('Gallery item updated!');
+      fetch('/api/gallery', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editingGallery),
+      }).catch(() => {});
     }
     setEditingGallery(null);
   };
@@ -586,12 +618,15 @@ export default function Admin() {
     if (type === 'product') {
       setProducts(products.filter((p) => p.id !== id));
       showToast(`"${title}" removed from catalog.`);
+      fetch(`/api/products?id=${id}`, { method: 'DELETE' }).catch(() => {});
     } else if (type === 'project') {
       setProjects(projects.filter((p) => p.id !== id));
       showToast(`"${title}" project removed.`);
+      fetch(`/api/projects?id=${id}`, { method: 'DELETE' }).catch(() => {});
     } else if (type === 'gallery') {
       setGallery(gallery.filter((g) => g.id !== id));
       showToast('Photo deleted from gallery.');
+      fetch(`/api/gallery?id=${id}`, { method: 'DELETE' }).catch(() => {});
     }
 
     setDeleteConfirmation(null);
