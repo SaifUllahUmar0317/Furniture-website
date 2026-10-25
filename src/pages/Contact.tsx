@@ -21,21 +21,27 @@ export default function Contact() {
       const formData = new FormData(e.currentTarget);
       const customerEmail = formData.get('email');
       const customerName = formData.get('name') ?? 'a visitor';
-      // Formspree special fields — email subject and CC to workshop
+      
+      // Formspree special fields
       formData.set('_subject', `New Website Enquiry from ${customerName} — Tehkal Hafsa Furniture`);
-      formData.append('_cc', 'Roohk700@gmail.com');
       if (typeof customerEmail === 'string' && customerEmail) {
         formData.append('_replyto', customerEmail);
       }
-      await fetch(endpoint, {
+
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: { Accept: 'application/json' },
         body: formData,
       });
+
+      if (!response.ok) {
+        throw new Error('Submission failed');
+      }
+
       setFormStatus('success');
     } catch {
-      // Graceful fallback to success state
-      setFormStatus('success');
+      setFormStatus('idle');
+      alert('Could not send message. Please reach out to us directly via WhatsApp (+92 300 0000000) or email (Roohk700@gmail.com).');
     }
   };
 
@@ -142,7 +148,6 @@ export default function Contact() {
                 <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
                   {/* Formspree hidden routing fields */}
                   <input type="hidden" name="_subject" value="New Website Enquiry — Tehkal Hafsa Furniture" />
-                  <input type="hidden" name="_cc" value="Roohk700@gmail.com" />
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-foreground/50 text-[0.65rem] uppercase tracking-widest ml-1">Full Name</label>

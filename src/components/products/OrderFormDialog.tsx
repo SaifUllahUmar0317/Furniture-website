@@ -42,9 +42,8 @@ export function OrderFormDialog({ product, open, onOpenChange }: OrderFormDialog
 
     const formData = new FormData(event.currentTarget);
     const customerEmail = formData.get('email');
-    // Formspree special fields — subject, CC to workshop, reply-to customer
+    // Formspree special fields — subject, reply-to customer
     formData.append('_subject', `Custom Order Request: ${product.name} — Tehkal Hafsa Furniture`);
-    formData.append('_cc', 'Roohk700@gmail.com');
     if (typeof customerEmail === 'string' && customerEmail) {
       formData.append('_replyto', customerEmail);
     }
