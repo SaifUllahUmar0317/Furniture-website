@@ -12,44 +12,44 @@ export default function Home() {
   return (
     <div className="w-full">
       {/* Hero Section */}
-      <section className="relative h-screen min-h-[600px] w-full flex items-center justify-center overflow-hidden">
+      <section className="relative h-[100dvh] min-h-[540px] w-full flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
             src={heroImg}
             alt="Furniture in a living room"
             className="w-full h-full object-cover scale-105 animate-in slide-in-from-bottom-2 duration-[2000ms]"
           />
-          <div className="absolute inset-0 bg-black/15 dark:bg-background/35" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent dark:from-background/60 dark:via-background/10 dark:to-transparent" />
+          <div className="absolute inset-0 bg-black/25 dark:bg-background/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent dark:from-background/80 dark:via-background/25 dark:to-transparent" />
         </div>
 
-        <div className="container mx-auto px-4 sm:px-6 relative z-10 text-center mt-16 sm:mt-20">
+        <div className="container mx-auto px-4 sm:px-6 relative z-10 text-center mt-12 sm:mt-16">
           <FadeIn delay={0.2}>
-            <span className="font-sans text-xs md:text-sm tracking-[0.4em] uppercase text-[#B88D3B] dark:text-primary mb-4 sm:mb-6 block">
+            <span className="font-sans text-xs md:text-sm tracking-[0.4em] uppercase text-[#B88D3B] dark:text-primary mb-3 sm:mb-6 block font-medium">
               Welcome to Tehkal Hafsa
             </span>
           </FadeIn>
           <FadeIn delay={0.4}>
-            <h1 className="font-serif text-balance text-4xl sm:text-5xl md:text-7xl lg:text-8xl text-[#FAF7EF] dark:text-foreground leading-tight mb-6 sm:mb-8 max-w-5xl mx-auto">
+            <h1 className="font-serif text-balance text-4xl sm:text-5xl md:text-7xl lg:text-8xl text-[#FAF7EF] dark:text-foreground leading-tight mb-4 sm:mb-8 max-w-5xl mx-auto">
               Furniture Made for <span className="italic text-[#F2EBDD] dark:text-foreground/90">Modern Homes.</span>
             </h1>
           </FadeIn>
           <FadeIn delay={0.6}>
-            <p className="text-[#F7F3E8]/85 dark:text-foreground/75 max-w-xl sm:max-w-2xl mx-auto text-base sm:text-lg mb-8 sm:mb-12 font-light leading-relaxed px-2">
+            <p className="text-[#F7F3E8]/85 dark:text-foreground/75 max-w-xl sm:max-w-2xl mx-auto text-base sm:text-lg mb-6 sm:mb-10 font-light leading-relaxed px-2">
               We have made furniture and designed rooms in Peshawar for over 10 years. We build pieces that fit your home and the way you use it.
             </p>
           </FadeIn>
           <FadeIn delay={0.8}>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 max-w-xs sm:max-w-none mx-auto">
               <Link
                 href="/products"
-                className="w-full sm:w-auto px-8 py-4 bg-primary text-primary-foreground uppercase tracking-widest text-sm font-medium hover:bg-foreground hover:text-background transition-colors duration-500 text-center"
+                className="w-full sm:w-auto px-8 py-3.5 sm:py-4 bg-primary text-primary-foreground uppercase tracking-widest text-xs sm:text-sm font-medium hover:bg-foreground hover:text-background transition-colors duration-500 text-center shadow-lg"
               >
                 Browse Furniture
               </Link>
               <Link
                 href="/contact"
-                className="w-full sm:w-auto px-8 py-4 border border-[#F7F3E8]/50 text-[#F7F3E8] dark:border-foreground/35 dark:text-foreground uppercase tracking-widest text-sm font-medium hover:border-[#B88D3B] hover:text-[#C6A45C] dark:hover:border-primary dark:hover:text-primary transition-colors duration-500 text-center"
+                className="w-full sm:w-auto px-8 py-3.5 sm:py-4 border border-[#F7F3E8]/50 text-[#F7F3E8] dark:border-foreground/35 dark:text-foreground uppercase tracking-widest text-xs sm:text-sm font-medium hover:border-[#B88D3B] hover:text-[#C6A45C] dark:hover:border-primary dark:hover:text-primary transition-colors duration-500 text-center backdrop-blur-xs"
               >
                 Contact Us
               </Link>

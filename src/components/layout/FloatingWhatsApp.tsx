@@ -10,7 +10,10 @@ export function FloatingWhatsApp() {
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${defaultMessage}`;
 
   return (
-    <aside aria-label="WhatsApp Chat" className="fixed bottom-6 right-6 z-50 flex items-center">
+    <aside
+      aria-label="WhatsApp Chat"
+      className="fixed bottom-8 sm:bottom-6 right-5 sm:right-6 z-50 flex items-center mb-[env(safe-area-inset-bottom,0px)]"
+    >
       {/* Tooltip prompt like a chatbot */}
       <div
         className={`mr-3 hidden sm:flex items-center gap-2.5 bg-card/95 backdrop-blur-md border border-border text-foreground px-4 py-2.5 rounded-full shadow-2xl text-xs font-medium transition-all duration-300 pointer-events-none select-none ${

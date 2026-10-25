@@ -26,14 +26,11 @@ export function Navbar() {
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const { theme, setTheme } = useTheme();
-  const isTransparentHero = location === '/' && !isScrolled;
-  const isLightHero = isTransparentHero && theme === 'light';
-
   const isAboutActive = ABOUT_LINKS.some((item) => location === item.href);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > 20);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -58,25 +55,19 @@ export function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 border-b border-transparent ${
-        isScrolled ? 'bg-background/85 backdrop-blur-xl border-border py-3.5 shadow-sm' : 'bg-transparent py-5'
+      className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 border-b ${
+        isScrolled
+          ? 'bg-background/90 backdrop-blur-xl border-border py-3 sm:py-3.5 shadow-sm'
+          : 'bg-background/80 backdrop-blur-xl border-border/50 py-3 sm:py-3.5'
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 max-w-7xl flex items-center justify-between">
         {/* Brand Logo */}
         <Link href="/" className="z-50 flex shrink-0 flex-col items-start whitespace-nowrap group">
-          <span
-            className={`font-serif text-xl tracking-[0.08em] uppercase whitespace-nowrap transition-colors duration-500 xl:text-2xl ${
-              isLightHero ? 'text-[#FAF7EF] group-hover:text-[#C6A45C]' : 'text-foreground group-hover:text-primary'
-            }`}
-          >
+          <span className="font-serif text-xl tracking-[0.08em] uppercase whitespace-nowrap transition-colors duration-300 xl:text-2xl text-foreground group-hover:text-primary">
             Tehkal Hafsa
           </span>
-          <span
-            className={`font-sans text-[0.65rem] tracking-[0.3em] uppercase ${
-              isLightHero ? 'text-[#B88D3B]' : 'text-primary'
-            }`}
-          >
+          <span className="font-sans text-[0.65rem] tracking-[0.3em] uppercase text-primary">
             Furniture
           </span>
         </Link>
@@ -89,11 +80,7 @@ export function Navbar() {
               href={link.href}
               className={`shrink-0 whitespace-nowrap text-xs tracking-[0.14em] uppercase transition-all duration-300 hover:text-primary ${
                 location === link.href || (link.href === '/products' && location.startsWith('/products/'))
-                  ? isLightHero
-                    ? 'text-[#B88D3B] font-medium'
-                    : 'text-primary font-medium'
-                  : isLightHero
-                  ? 'text-[#FAF7EF]/85'
+                  ? 'text-primary font-medium'
                   : 'text-foreground/75'
               }`}
             >
@@ -111,11 +98,7 @@ export function Navbar() {
               onClick={() => setAboutDropdownOpen((prev) => !prev)}
               className={`shrink-0 flex items-center gap-1.5 text-xs tracking-[0.14em] uppercase transition-all duration-300 hover:text-primary focus:outline-none ${
                 isAboutActive
-                  ? isLightHero
-                    ? 'text-[#B88D3B] font-medium'
-                    : 'text-primary font-medium'
-                  : isLightHero
-                  ? 'text-[#FAF7EF]/85'
+                  ? 'text-primary font-medium'
                   : 'text-foreground/75'
               }`}
               aria-expanded={aboutDropdownOpen}
@@ -167,9 +150,7 @@ export function Navbar() {
             {/* Theme Toggle */}
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className={`p-2 transition-colors focus:outline-none rounded-full hover:bg-muted/50 ${
-                isLightHero ? 'text-[#FAF7EF]/85 hover:text-[#C6A45C]' : 'text-foreground/70 hover:text-primary'
-              }`}
+              className="p-2 transition-colors focus:outline-none rounded-full hover:bg-muted/50 text-foreground/70 hover:text-primary"
               aria-label="Toggle Theme"
               title="Toggle dark/light theme"
             >
@@ -184,8 +165,6 @@ export function Navbar() {
               className={`p-2 transition-colors focus:outline-none rounded-full hover:bg-muted/50 ${
                 location === '/admin'
                   ? 'text-primary bg-primary/10'
-                  : isLightHero
-                  ? 'text-[#FAF7EF]/85 hover:text-[#C6A45C]'
                   : 'text-foreground/70 hover:text-primary'
               }`}
             >
@@ -195,11 +174,7 @@ export function Navbar() {
             {/* Contact Us CTA Button */}
             <Link
               href="/contact"
-              className={`shrink-0 whitespace-nowrap px-4 py-2 text-xs uppercase tracking-[0.12em] font-medium transition-all duration-300 ${
-                isTransparentHero && theme === 'light'
-                  ? 'border border-[#C6A45C] bg-[#C6A45C] text-black hover:bg-[#B88D3B]'
-                  : 'border border-primary text-primary hover:bg-primary hover:text-primary-foreground'
-              }`}
+              className="shrink-0 whitespace-nowrap px-4 py-2 text-xs uppercase tracking-[0.12em] font-medium transition-all duration-300 border border-primary text-primary hover:bg-primary hover:text-primary-foreground"
             >
               Contact Us
             </Link>
@@ -213,9 +188,7 @@ export function Navbar() {
             className={`p-1.5 transition-colors ${
               location === '/admin'
                 ? 'text-primary'
-                : isLightHero && !mobileMenuOpen
-                ? 'text-[#FAF7EF]/85'
-                : 'text-foreground/70'
+                : 'text-foreground/80 hover:text-primary'
             }`}
             title="Admin Portal"
             aria-label="Admin Portal"
@@ -224,21 +197,13 @@ export function Navbar() {
           </Link>
           <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className={`p-1.5 transition-colors focus:outline-none ${
-              isLightHero && !mobileMenuOpen
-                ? 'text-[#FAF7EF]/85 hover:text-[#C6A45C]'
-                : 'text-foreground/70 hover:text-primary'
-            }`}
+            className="p-1.5 transition-colors focus:outline-none text-foreground/80 hover:text-primary"
             aria-label="Toggle Theme"
           >
             {theme === 'dark' ? <Sun size={19} /> : <Moon size={19} />}
           </button>
           <button
-            className={`p-1.5 transition-colors ${
-              isLightHero && !mobileMenuOpen
-                ? 'text-[#FAF7EF] hover:text-[#C6A45C]'
-                : 'text-foreground hover:text-primary'
-            }`}
+            className="p-1.5 transition-colors text-foreground hover:text-primary"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle Menu"
           >
