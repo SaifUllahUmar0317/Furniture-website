@@ -66,7 +66,9 @@ export default function Admin() {
   const [resetStatus, setResetStatus] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [isResetting, setIsResetting] = useState(false);
 
-  // Security tab custom recovery key state
+  // Security tab state
+  const [securityRecoveryKey, setSecurityRecoveryKey] = useState('');
+  const [showSecurityRecoveryKey, setShowSecurityRecoveryKey] = useState(false);
   const [customRecoveryKey, setCustomRecoveryKey] = useState('');
   const [recoveryKeyMessage, setRecoveryKeyMessage] = useState<string | null>(null);
 
@@ -229,15 +231,34 @@ export default function Admin() {
     e.preventDefault();
     setSecurityMessage(null);
 
+    if (!currentPass.trim() && !securityRecoveryKey.trim()) {
+      setSecurityMessage({
+        type: 'error',
+        text: 'Please enter either your current password OR your secret master key.',
+      });
+      return;
+    }
+
     if (newPass !== confirmPass) {
       setSecurityMessage({ type: 'error', text: 'New passwords do not match.' });
       return;
     }
 
-    const res = await changeAdminPassword(currentPass, newPass, newUsername || undefined);
+    if (newPass.length < 6) {
+      setSecurityMessage({ type: 'error', text: 'New password must be at least 6 characters long.' });
+      return;
+    }
+
+    const res = await changeAdminPassword(
+      currentPass.trim() || undefined,
+      newPass,
+      newUsername || undefined,
+      securityRecoveryKey.trim() || undefined
+    );
     if (res.success) {
       setSecurityMessage({ type: 'success', text: 'Admin credentials successfully updated!' });
       setCurrentPass('');
+      setSecurityRecoveryKey('');
       setNewPass('');
       setConfirmPass('');
       setNewUsername('');
@@ -402,79 +423,58 @@ export default function Admin() {
                     />
                   </div>
 
-                  {/* Verification Credentials: Old Password OR Secret Recovery Key */}
-                  <div className="space-y-3 p-3.5 bg-muted/20 border border-border/80">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs uppercase tracking-wider text-foreground font-semibold flex items-center space-x-1.5">
-                        <Lock className="w-3.5 h-3.5 text-primary" />
-                        <span>Identity Verification</span>
-                      </span>
-                      <span className="text-[10px] text-primary font-medium uppercase tracking-widest bg-primary/10 px-2 py-0.5 border border-primary/20">
-                        Either Required
-                      </span>
+                  <div>
+                    <label className="text-xs uppercase tracking-wider text-muted-foreground block mb-1 font-medium">
+                      Current Password
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showResetOldPass ? 'text' : 'password'}
+                        value={resetOldPass}
+                        onChange={(e) => setResetOldPass(e.target.value)}
+                        placeholder="Enter current password"
+                        className="w-full bg-background border border-border px-3 py-2.5 pr-10 text-sm text-foreground focus:border-primary focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowResetOldPass(!showResetOldPass)}
+                        className="absolute right-3 top-3 text-muted-foreground hover:text-foreground transition-colors focus:outline-none"
+                        title={showResetOldPass ? 'Hide password' : 'Show password'}
+                      >
+                        {showResetOldPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
                     </div>
-                    <p className="text-[11px] text-muted-foreground leading-relaxed">
-                      Enter <strong>either</strong> your current/old password <strong>OR</strong> your secret master recovery key to verify your identity.
-                    </p>
+                  </div>
 
-                    {/* Option 1: Old Password */}
-                    <div>
-                      <label className="text-xs uppercase tracking-wider text-muted-foreground block mb-1 font-medium flex items-center justify-between">
-                        <span>1. Current / Old Password</span>
-                        <span className="text-[10px] text-muted-foreground/70 normal-case">(if remembered)</span>
-                      </label>
-                      <div className="relative">
-                        <input
-                          type={showResetOldPass ? 'text' : 'password'}
-                          value={resetOldPass}
-                          onChange={(e) => setResetOldPass(e.target.value)}
-                          placeholder="Enter current password"
-                          className="w-full bg-background border border-border px-3 py-2.5 pr-10 text-sm text-foreground focus:border-primary focus:outline-none"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowResetOldPass(!showResetOldPass)}
-                          className="absolute right-3 top-3 text-muted-foreground hover:text-foreground transition-colors focus:outline-none"
-                          title={showResetOldPass ? 'Hide password' : 'Show password'}
-                        >
-                          {showResetOldPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </button>
-                      </div>
+                  <div className="relative flex items-center justify-center my-1">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-border"></div>
                     </div>
+                    <span className="relative bg-card px-3 text-[11px] uppercase font-bold tracking-widest text-muted-foreground">
+                      OR
+                    </span>
+                  </div>
 
-                    {/* Divider OR */}
-                    <div className="relative flex items-center justify-center my-1">
-                      <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-border/60"></div>
-                      </div>
-                      <span className="relative bg-card px-3 text-[10px] uppercase font-bold tracking-widest text-muted-foreground">
-                        — OR —
-                      </span>
-                    </div>
-
-                    {/* Option 2: Secret Master Recovery Key */}
-                    <div>
-                      <label className="text-xs uppercase tracking-wider text-muted-foreground block mb-1 font-medium flex items-center justify-between">
-                        <span>2. Secret Master Recovery Key</span>
-                        <span className="text-[10px] text-muted-foreground/70 normal-case">(e.g. ceo-Mr.Rooh)</span>
-                      </label>
-                      <div className="relative">
-                        <input
-                          type={showResetKey ? 'text' : 'password'}
-                          value={recoveryKeyInput}
-                          onChange={(e) => setRecoveryKeyInput(e.target.value)}
-                          placeholder="Enter your secret recovery key"
-                          className="w-full bg-background border border-border px-3 py-2.5 pr-10 text-sm text-foreground focus:border-primary focus:outline-none"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowResetKey(!showResetKey)}
-                          className="absolute right-3 top-3 text-muted-foreground hover:text-foreground transition-colors focus:outline-none"
-                          title={showResetKey ? 'Hide key' : 'Show key'}
-                        >
-                          {showResetKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </button>
-                      </div>
+                  <div>
+                    <label className="text-xs uppercase tracking-wider text-muted-foreground block mb-1 font-medium">
+                      Secret Master Recovery Key
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showResetKey ? 'text' : 'password'}
+                        value={recoveryKeyInput}
+                        onChange={(e) => setRecoveryKeyInput(e.target.value)}
+                        placeholder="Enter secret recovery key"
+                        className="w-full bg-background border border-border px-3 py-2.5 pr-10 text-sm text-foreground focus:border-primary focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowResetKey(!showResetKey)}
+                        className="absolute right-3 top-3 text-muted-foreground hover:text-foreground transition-colors focus:outline-none"
+                        title={showResetKey ? 'Hide key' : 'Show key'}
+                      >
+                        {showResetKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
                     </div>
                   </div>
 
@@ -1100,12 +1100,11 @@ export default function Admin() {
 
                 <div>
                   <label className="text-xs uppercase tracking-wider text-muted-foreground block mb-1">
-                    Current Password *
+                    Current Password
                   </label>
                   <div className="relative">
                     <input
                       type={showCurrentPass ? 'text' : 'password'}
-                      required
                       value={currentPass}
                       onChange={(e) => setCurrentPass(e.target.value)}
                       placeholder="Enter current password"
@@ -1118,6 +1117,38 @@ export default function Admin() {
                       title={showCurrentPass ? 'Hide password' : 'Show password'}
                     >
                       {showCurrentPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="relative flex items-center justify-center my-1">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-border"></div>
+                  </div>
+                  <span className="relative bg-card px-3 text-[11px] uppercase font-bold tracking-widest text-muted-foreground">
+                    OR
+                  </span>
+                </div>
+
+                <div>
+                  <label className="text-xs uppercase tracking-wider text-muted-foreground block mb-1">
+                    Secret Master Recovery Key
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showSecurityRecoveryKey ? 'text' : 'password'}
+                      value={securityRecoveryKey}
+                      onChange={(e) => setSecurityRecoveryKey(e.target.value)}
+                      placeholder="Enter secret recovery key"
+                      className="w-full bg-background border border-border px-3 py-2.5 pr-10 text-sm text-foreground focus:border-primary focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowSecurityRecoveryKey(!showSecurityRecoveryKey)}
+                      className="absolute right-3 top-3 text-muted-foreground hover:text-foreground transition-colors focus:outline-none"
+                      title={showSecurityRecoveryKey ? 'Hide key' : 'Show key'}
+                    >
+                      {showSecurityRecoveryKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
                 </div>

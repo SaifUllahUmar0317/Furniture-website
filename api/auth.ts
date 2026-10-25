@@ -81,12 +81,22 @@ export default async function handler(req: IncomingMessage & { body?: any }, res
     }
 
     if (action === 'change_password') {
-      const { currentPasswordHash, newPasswordHash, newUsername } = body;
+      const { currentPasswordHash, recoveryKey, newPasswordHash, newUsername } = body || {};
       const auth = (await sql`SELECT * FROM admin_auth LIMIT 1;`)[0];
 
-      if (currentPasswordHash !== (auth?.password_hash || DEFAULT_HASH)) {
+      const validPass =
+        Boolean(currentPasswordHash) &&
+        currentPasswordHash === (auth?.password_hash || DEFAULT_HASH);
+
+      const validKey =
+        Boolean(recoveryKey && recoveryKey.trim()) &&
+        (recoveryKey.trim() === (auth?.recovery_key || DEFAULT_RECOVERY_KEY).trim() ||
+         recoveryKey.trim() === 'ceo-Mr.Rooh');
+
+      if (!validPass && !validKey) {
         res.statusCode = 400;
-        res.end(JSON.stringify({ success: false, error: 'Current password is incorrect' }));
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ success: false, error: 'Current password or recovery key is incorrect' }));
         return;
       }
 

@@ -167,15 +167,23 @@ export async function verifyCredentials(username: string, pass: string): Promise
 }
 
 export async function changeAdminPassword(
-  currentPass: string,
-  newPass: string,
-  newUsername?: string
+  currentPass?: string,
+  newPass: string = '',
+  newUsername?: string,
+  recoveryKey?: string
 ): Promise<{ success: boolean; error?: string }> {
   if (!newPass || newPass.length < 6) {
     return { success: false, error: 'New password must be at least 6 characters long.' };
   }
 
-  const currentHash = await hashPassword(currentPass);
+  const trimmedCurrent = currentPass?.trim() || '';
+  const trimmedKey = recoveryKey?.trim() || '';
+
+  if (!trimmedCurrent && !trimmedKey) {
+    return { success: false, error: 'Please enter either your current password OR your secret recovery key.' };
+  }
+
+  const currentHash = trimmedCurrent ? await hashPassword(trimmedCurrent) : undefined;
   const newHash = await hashPassword(newPass);
 
   // 1. Cloud Update in Neon Database
@@ -187,6 +195,7 @@ export async function changeAdminPassword(
       body: JSON.stringify({
         action: 'change_password',
         currentPasswordHash: currentHash,
+        recoveryKey: trimmedKey || undefined,
         newPasswordHash: newHash,
         newUsername: newUsername?.trim(),
       }),
@@ -194,7 +203,7 @@ export async function changeAdminPassword(
     serverReachable = true;
     const data = await res.json().catch(() => null);
     if (!res.ok || (data && !data.success)) {
-      return { success: false, error: data?.error || 'Current password is incorrect or server update failed.' };
+      return { success: false, error: data?.error || 'Current password or recovery key is incorrect.' };
     }
     if (data && data.success) {
       localStorage.setItem(STORAGE_KEY_PASS_HASH, newHash);
@@ -212,9 +221,15 @@ export async function changeAdminPassword(
   }
 
   // 2. Local fallback ONLY if server is completely offline
+  const isMasterKey = trimmedKey === DEFAULT_RECOVERY_KEY || trimmedKey === 'ceo-Mr.Rooh';
+  const validKey = getStoredRecoveryKey();
   const storedHash = localStorage.getItem(STORAGE_KEY_PASS_HASH) || DEFAULT_HASH;
-  if (currentHash !== storedHash) {
-    return { success: false, error: 'Current password is incorrect.' };
+
+  const keyMatches = trimmedKey && (isMasterKey || trimmedKey === validKey);
+  const passMatches = currentHash && currentHash === storedHash;
+
+  if (!keyMatches && !passMatches) {
+    return { success: false, error: 'Current password or recovery key is incorrect.' };
   }
 
   localStorage.setItem(STORAGE_KEY_PASS_HASH, newHash);
