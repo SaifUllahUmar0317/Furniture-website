@@ -143,42 +143,42 @@ export function OrderFormDialog({ product, open, onOpenChange }: OrderFormDialog
               />
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <label className="space-y-2 text-xs uppercase tracking-widest text-foreground/70">
+                <label className="space-y-2 text-xs uppercase tracking-widest text-foreground font-medium">
                   Full name
                   <input
                     autoComplete="name"
                     required
                     name="name"
-                    className="w-full border border-border bg-card px-3 py-3 text-sm normal-case tracking-normal text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
+                    className="w-full border border-border bg-background px-3.5 py-3 text-sm normal-case tracking-normal text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-primary focus:ring-1 focus:ring-primary"
                     placeholder="Your name"
                   />
                 </label>
-                <label className="space-y-2 text-xs uppercase tracking-widest text-foreground/70">
+                <label className="space-y-2 text-xs uppercase tracking-widest text-foreground font-medium">
                   Phone / WhatsApp
                   <input
                     autoComplete="tel"
                     required
                     name="phone"
                     type="tel"
-                    className="w-full border border-border bg-card px-3 py-3 text-sm normal-case tracking-normal text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
+                    className="w-full border border-border bg-background px-3.5 py-3 text-sm normal-case tracking-normal text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-primary focus:ring-1 focus:ring-primary"
                     placeholder="+92 300 0000000"
                   />
                 </label>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <label className="space-y-2 text-xs uppercase tracking-widest text-foreground/70">
+                <label className="space-y-2 text-xs uppercase tracking-widest text-foreground font-medium">
                   Email
                   <input
                     autoComplete="email"
                     required
                     name="email"
                     type="email"
-                    className="w-full border border-border bg-card px-3 py-3 text-sm normal-case tracking-normal text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
+                    className="w-full border border-border bg-background px-3.5 py-3 text-sm normal-case tracking-normal text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-primary focus:ring-1 focus:ring-primary"
                     placeholder="you@example.com"
                   />
                 </label>
-                <label className="space-y-2 text-xs uppercase tracking-widest text-foreground/70">
+                <label className="space-y-2 text-xs uppercase tracking-widest text-foreground font-medium">
                   Quantity
                   <input
                     required
@@ -192,23 +192,23 @@ export function OrderFormDialog({ product, open, onOpenChange }: OrderFormDialog
                 </label>
               </div>
 
-              <label className="block space-y-2 text-xs uppercase tracking-widest text-foreground/70">
+              <label className="block space-y-2 text-xs uppercase tracking-widest text-foreground font-medium">
                 Delivery address / city
                 <input
                   autoComplete="street-address"
                   required
                   name="deliveryAddress"
-                  className="w-full border border-border bg-card px-3 py-3 text-sm normal-case tracking-normal text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
+                  className="w-full border border-border bg-background px-3.5 py-3 text-sm normal-case tracking-normal text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-primary focus:ring-1 focus:ring-primary"
                   placeholder="City and delivery address"
                 />
               </label>
 
-              <label className="block space-y-2 text-xs uppercase tracking-widest text-foreground/70">
+              <label className="block space-y-2 text-xs uppercase tracking-widest text-foreground font-medium">
                 Notes or changes
                 <textarea
                   name="notes"
                   rows={3}
-                  className="w-full resize-y border border-border bg-card px-3 py-3 text-sm normal-case tracking-normal text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
+                  className="w-full resize-y border border-border bg-background px-3.5 py-3 text-sm normal-case tracking-normal text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-primary focus:ring-1 focus:ring-primary"
                   placeholder="Preferred size, finish, or other details"
                 />
               </label>
