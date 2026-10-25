@@ -35,6 +35,7 @@ import {
   verifyCredentials,
   changeAdminPassword,
   getAdminUsername,
+  fetchAdminInfo,
   resetPasswordWithKey,
   resetPasswordWithCredentials,
   getStoredRecoveryKey,
@@ -114,6 +115,14 @@ export default function Admin() {
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  React.useEffect(() => {
+    fetchAdminInfo().then((info) => {
+      if (info?.username) {
+        setResetUsername(info.username);
+      }
+    });
+  }, []);
+
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3500);
@@ -134,7 +143,7 @@ export default function Admin() {
         setLoginError('Invalid username or password. Please verify your credentials.');
       }
     } catch {
-      setLoginError('Authentication service encountered an error.');
+      setLoginError('Unable to reach central authentication server. Please check your network.');
     } finally {
       setIsVerifying(false);
     }

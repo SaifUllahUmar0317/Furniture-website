@@ -50,9 +50,10 @@ function apiDevPlugin(): Plugin {
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  if (env.DATABASE_URL && !process.env.DATABASE_URL) {
-    process.env.DATABASE_URL = env.DATABASE_URL;
-  }
+  process.env.DATABASE_URL =
+    env.DATABASE_URL ||
+    process.env.DATABASE_URL ||
+    'postgresql://neondb_owner:npg_U9aeszr3Rtic@ep-hidden-waterfall-b7ctz71u-pooler.c-13.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
 
   return {
     base: process.env.BASE_PATH || '/',

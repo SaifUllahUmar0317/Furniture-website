@@ -132,10 +132,30 @@ export function setStoredRecoveryKey(key: string): void {
   localStorage.setItem(STORAGE_KEY_RECOVERY_KEY, key.trim());
 }
 
+export async function fetchAdminInfo(): Promise<{ username: string; recoveryKey: string }> {
+  try {
+    const res = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'get_info' }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.username) {
+        localStorage.setItem(STORAGE_KEY_USERNAME, data.username);
+        if (data.recoveryKey) {
+          localStorage.setItem(STORAGE_KEY_RECOVERY_KEY, data.recoveryKey);
+        }
+        return { username: data.username, recoveryKey: data.recoveryKey };
+      }
+    }
+  } catch {}
+  return { username: getAdminUsername(), recoveryKey: getStoredRecoveryKey() };
+}
+
 export async function verifyCredentials(username: string, pass: string): Promise<boolean> {
   const inputHash = await hashPassword(pass);
 
-  // 1. Cloud Verification via Neon API
   try {
     const res = await fetch('/api/auth', {
       method: 'POST',
@@ -144,7 +164,7 @@ export async function verifyCredentials(username: string, pass: string): Promise
     });
     if (res.ok) {
       const data = await res.json();
-      if (typeof data.success === 'boolean') {
+      if (typeof data?.success === 'boolean') {
         if (data.success) {
           localStorage.setItem(STORAGE_KEY_USERNAME, username.trim());
           localStorage.setItem(STORAGE_KEY_PASS_HASH, inputHash);
@@ -152,19 +172,12 @@ export async function verifyCredentials(username: string, pass: string): Promise
         return data.success;
       }
     }
-    // 5xx = DB error → fall through to local fallback
-  } catch {
-    // Server offline, fall back to local storage
+    const errData = await res.json().catch(() => null);
+    throw new Error(errData?.error || 'Authentication rejected');
+  } catch (err: any) {
+    console.error('Central verification error:', err);
+    throw err;
   }
-
-  // 2. Client fallback verification ONLY if server is completely offline / unreachable
-  const currentUsername = getAdminUsername();
-  if (username.trim().toLowerCase() !== currentUsername.toLowerCase()) {
-    return false;
-  }
-
-  const storedHash = localStorage.getItem(STORAGE_KEY_PASS_HASH) || DEFAULT_HASH;
-  return inputHash === storedHash;
 }
 
 export async function changeAdminPassword(
@@ -187,8 +200,6 @@ export async function changeAdminPassword(
   const currentHash = trimmedCurrent ? await hashPassword(trimmedCurrent) : undefined;
   const newHash = await hashPassword(newPass);
 
-  // 1. Cloud Update in Neon Database
-  let serverAvailable = false;
   try {
     const res = await fetch('/api/auth', {
       method: 'POST',
@@ -204,7 +215,6 @@ export async function changeAdminPassword(
     const data = await res.json().catch(() => null);
 
     if (res.ok && data?.success) {
-      // Confirmed success from server
       localStorage.setItem(STORAGE_KEY_PASS_HASH, newHash);
       if (newUsername && newUsername.trim()) {
         localStorage.setItem(STORAGE_KEY_USERNAME, newUsername.trim());
@@ -212,36 +222,16 @@ export async function changeAdminPassword(
       return { success: true };
     }
 
-    if (res.status >= 400 && res.status < 500) {
-      // 4xx = explicit rejection (wrong password/key)
-      return { success: false, error: data?.error || 'Current password or recovery key is incorrect.' };
-    }
-
-    // 5xx = DB/server error → fall through to local fallback
-  } catch {
-    // Network error → server completely offline
+    return {
+      success: false,
+      error: data?.error || 'Failed to update credentials on central database.',
+    };
+  } catch (err: any) {
+    return {
+      success: false,
+      error: 'Cannot connect to central database server. Please check your connection and try again.',
+    };
   }
-
-  // 2. Local fallback (server offline or DB connection error)
-  // Also accept admin123 against DEFAULT_HASH regardless of stored hash (since DB may have different state)
-  const isMasterKey = trimmedKey === DEFAULT_RECOVERY_KEY || trimmedKey === 'ceo-Mr.Rooh';
-  const validKey = getStoredRecoveryKey();
-  const storedHash = localStorage.getItem(STORAGE_KEY_PASS_HASH) || DEFAULT_HASH;
-
-  const keyMatches = trimmedKey && (isMasterKey || trimmedKey === validKey);
-  // Also accept if current hash matches DEFAULT_HASH (admin123) as an always-valid fallback
-  const passMatches = currentHash && (currentHash === storedHash || currentHash === DEFAULT_HASH);
-
-  if (!keyMatches && !passMatches) {
-    return { success: false, error: 'Current password or recovery key is incorrect.' };
-  }
-
-  localStorage.setItem(STORAGE_KEY_PASS_HASH, newHash);
-  if (newUsername && newUsername.trim()) {
-    localStorage.setItem(STORAGE_KEY_USERNAME, newUsername.trim());
-  }
-
-  return { success: true };
 }
 
 export async function resetPasswordWithCredentials({
@@ -272,8 +262,6 @@ export async function resetPasswordWithCredentials({
   const currentPasswordHash = trimmedOldPass ? await hashPassword(trimmedOldPass) : undefined;
   const newHash = await hashPassword(newPassword);
 
-  // 1. Cloud Reset in Neon Database
-  let serverAvailable = false;
   try {
     const res = await fetch('/api/auth', {
       method: 'POST',
@@ -295,34 +283,16 @@ export async function resetPasswordWithCredentials({
       return { success: true };
     }
 
-    if (res.status >= 400 && res.status < 500) {
-      // Explicit rejection
-      return {
-        success: false,
-        error: data?.error || 'Verification failed. Please check your old password or recovery key.',
-      };
-    }
-
-    // 5xx = DB/server error → fall through to local fallback
+    return {
+      success: false,
+      error: data?.error || 'Verification failed. Please check your old password or recovery key.',
+    };
   } catch {
-    // Network error
+    return {
+      success: false,
+      error: 'Cannot connect to central database server. Please check your connection and try again.',
+    };
   }
-
-  // 2. Local Fallback Reset
-  const isMasterKey = trimmedKey === DEFAULT_RECOVERY_KEY || trimmedKey === 'ceo-Mr.Rooh';
-  const validKey = getStoredRecoveryKey();
-  const storedHash = localStorage.getItem(STORAGE_KEY_PASS_HASH) || DEFAULT_HASH;
-
-  const keyMatches = trimmedKey && (isMasterKey || trimmedKey === validKey);
-  const passMatches = currentPasswordHash && currentPasswordHash === storedHash;
-
-  if (!keyMatches && !passMatches) {
-    return { success: false, error: 'Invalid current password or secret recovery key.' };
-  }
-
-  localStorage.setItem(STORAGE_KEY_USERNAME, username?.trim() || DEFAULT_USER);
-  localStorage.setItem(STORAGE_KEY_PASS_HASH, newHash);
-  return { success: true };
 }
 
 export async function resetPasswordWithKey(

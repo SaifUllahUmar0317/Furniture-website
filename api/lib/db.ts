@@ -1,20 +1,79 @@
-import { neon } from '@neondatabase/serverless';
+import https from 'https';
+import { neon, neonConfig } from '@neondatabase/serverless';
+
+// Public routable IPs for Neon AWS US-East-1 endpoint to bypass CGNAT 100.62.x.x unroutable DNS entries on residential Windows connections
+const PUBLIC_NEON_IPS = ['34.205.173.201', '52.2.183.93'];
+let ipIndex = 0;
+
+if (typeof process !== 'undefined' && !process.env.VERCEL) {
+  neonConfig.fetchFunction = (url: string, opts: any = {}) => {
+    return new Promise((resolve, reject) => {
+      const parsed = new URL(url);
+      const targetIp = PUBLIC_NEON_IPS[ipIndex % PUBLIC_NEON_IPS.length];
+      ipIndex++;
+
+      const headers = { ...opts.headers, Host: parsed.host };
+
+      const req = https.request(
+        {
+          protocol: 'https:',
+          hostname: targetIp,
+          port: 443,
+          path: parsed.pathname + parsed.search,
+          method: opts.method || 'GET',
+          headers: headers,
+          servername: parsed.hostname,
+          timeout: 8000,
+        },
+        (res) => {
+          const chunks: Buffer[] = [];
+          res.on('data', (c) => chunks.push(c));
+          res.on('end', () => {
+            const text = Buffer.concat(chunks).toString('utf8');
+            resolve({
+              ok: (res.statusCode || 0) >= 200 && (res.statusCode || 0) < 300,
+              status: res.statusCode || 200,
+              statusText: res.statusMessage || 'OK',
+              text: async () => text,
+              json: async () => JSON.parse(text),
+            });
+          });
+        }
+      );
+
+      req.on('timeout', () => {
+        req.destroy(new Error('Connect timeout to Neon'));
+      });
+      req.on('error', reject);
+
+      if (opts.body) {
+        req.write(opts.body);
+      }
+      req.end();
+    });
+  };
+}
+
+const DEFAULT_DATABASE_URL = 'postgresql://neondb_owner:npg_U9aeszr3Rtic@ep-hidden-waterfall-b7ctz71u-pooler.c-13.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
 
 /**
  * Returns a Neon SQL execution instance if DATABASE_URL is configured.
  */
 export function getDb() {
-  const dbUrl = process.env.DATABASE_URL;
+  const dbUrl = process.env.DATABASE_URL || DEFAULT_DATABASE_URL;
   if (!dbUrl) {
     return null;
   }
   return neon(dbUrl);
 }
 
+let schemaEnsured = false;
+
 /**
  * Automatically creates all tables and indexes if they do not exist.
  */
 export async function ensureSchema() {
+  if (schemaEnsured) return true;
   const sql = getDb();
   if (!sql) return false;
 
@@ -72,6 +131,7 @@ export async function ensureSchema() {
       );
     `;
 
+    schemaEnsured = true;
     return true;
   } catch (error) {
     console.error('Error ensuring database schema:', error);
