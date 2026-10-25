@@ -135,12 +135,12 @@ export function setStoredRecoveryKey(key: string): void {
 export async function verifyCredentials(username: string, pass: string): Promise<boolean> {
   const inputHash = await hashPassword(pass);
 
-  // 1. Try Cloud Verification via Neon API
+  // 1. Cloud Verification via Neon API
   try {
     const res = await fetch('/api/auth', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'verify', username, passwordHash: inputHash }),
+      body: JSON.stringify({ action: 'verify', username: username.trim(), passwordHash: inputHash }),
     });
     if (res.ok) {
       const data = await res.json();
@@ -153,32 +153,17 @@ export async function verifyCredentials(username: string, pass: string): Promise
       }
     }
   } catch {
-    // Fall back to local check
+    // Server offline, fall back to local storage
   }
 
-  // 2. Client fallback verification
-  // If the user inputs the master default credentials ('admin' and 'admin123'), ALWAYS accept and normalize localStorage
-  if (username.trim().toLowerCase() === DEFAULT_USER.toLowerCase() && pass === 'admin123') {
-    localStorage.setItem(STORAGE_KEY_USERNAME, DEFAULT_USER);
-    localStorage.setItem(STORAGE_KEY_PASS_HASH, DEFAULT_HASH);
-    return true;
-  }
-
+  // 2. Client fallback verification ONLY if server is completely offline / unreachable
   const currentUsername = getAdminUsername();
   if (username.trim().toLowerCase() !== currentUsername.toLowerCase()) {
     return false;
   }
 
-  const storedHash = localStorage.getItem(STORAGE_KEY_PASS_HASH);
-
-  if (!storedHash || storedHash === DEFAULT_HASH || storedHash === OLD_DEFAULT_HASH) {
-    if (pass === 'admin123') {
-      localStorage.setItem(STORAGE_KEY_PASS_HASH, DEFAULT_HASH);
-      return true;
-    }
-  }
-
-  return inputHash === storedHash || (inputHash === DEFAULT_HASH && !storedHash);
+  const storedHash = localStorage.getItem(STORAGE_KEY_PASS_HASH) || DEFAULT_HASH;
+  return inputHash === storedHash;
 }
 
 export async function changeAdminPassword(
@@ -193,7 +178,8 @@ export async function changeAdminPassword(
   const currentHash = await hashPassword(currentPass);
   const newHash = await hashPassword(newPass);
 
-  // 1. Try Cloud Update
+  // 1. Cloud Update in Neon Database
+  let serverReachable = false;
   try {
     const res = await fetch('/api/auth', {
       method: 'POST',
@@ -202,26 +188,32 @@ export async function changeAdminPassword(
         action: 'change_password',
         currentPasswordHash: currentHash,
         newPasswordHash: newHash,
-        newUsername,
+        newUsername: newUsername?.trim(),
       }),
     });
-    if (res.ok) {
-      const data = await res.json();
-      if (!data.success && data.error) {
-        return { success: false, error: data.error };
+    serverReachable = true;
+    const data = await res.json().catch(() => null);
+    if (!res.ok || (data && !data.success)) {
+      return { success: false, error: data?.error || 'Current password is incorrect or server update failed.' };
+    }
+    if (data && data.success) {
+      localStorage.setItem(STORAGE_KEY_PASS_HASH, newHash);
+      if (newUsername && newUsername.trim()) {
+        localStorage.setItem(STORAGE_KEY_USERNAME, newUsername.trim());
       }
+      return { success: true };
     }
   } catch {
-    // Fall back to local update
+    // Offline
   }
 
-  // 2. Local Update
-  const storedHash = localStorage.getItem(STORAGE_KEY_PASS_HASH) || DEFAULT_HASH;
-  const matchesCurrent =
-    currentHash === storedHash ||
-    (currentPass === 'admin123' && (storedHash === DEFAULT_HASH || storedHash === OLD_DEFAULT_HASH || !storedHash));
+  if (serverReachable) {
+    return { success: false, error: 'Failed to update credentials on server.' };
+  }
 
-  if (!matchesCurrent) {
+  // 2. Local fallback ONLY if server is completely offline
+  const storedHash = localStorage.getItem(STORAGE_KEY_PASS_HASH) || DEFAULT_HASH;
+  if (currentHash !== storedHash) {
     return { success: false, error: 'Current password is incorrect.' };
   }
 
@@ -244,28 +236,36 @@ export async function resetPasswordWithKey(
 
   const newHash = await hashPassword(newPassword);
 
-  // 1. Try Cloud Reset
+  // 1. Cloud Reset in Neon Database
+  let serverReachable = false;
   try {
     const res = await fetch('/api/auth', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         action: 'reset_password',
-        recoveryKey,
+        recoveryKey: recoveryKey.trim(),
         newPasswordHash: newHash,
       }),
     });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.success) {
-        localStorage.setItem(STORAGE_KEY_PASS_HASH, newHash);
-        return { success: true };
-      } else if (data.error) {
-        return { success: false, error: data.error };
+    serverReachable = true;
+    const data = await res.json().catch(() => null);
+    if (!res.ok || (data && !data.success)) {
+      return { success: false, error: data?.error || 'Invalid secret recovery key.' };
+    }
+    if (data && data.success) {
+      localStorage.setItem(STORAGE_KEY_PASS_HASH, newHash);
+      if (username && username.trim()) {
+        localStorage.setItem(STORAGE_KEY_USERNAME, username.trim());
       }
+      return { success: true };
     }
   } catch {
-    // Fall back to local reset
+    // Offline
+  }
+
+  if (serverReachable) {
+    return { success: false, error: 'Password reset rejected by server.' };
   }
 
   // 2. Local Fallback Reset
@@ -280,4 +280,28 @@ export async function resetPasswordWithKey(
   localStorage.setItem(STORAGE_KEY_PASS_HASH, newHash);
   localStorage.setItem(STORAGE_KEY_RECOVERY_KEY, DEFAULT_RECOVERY_KEY);
   return { success: true };
+}
+
+export async function updateRecoveryKeyCloud(newKey: string): Promise<{ success: boolean; error?: string }> {
+  const trimmed = newKey.trim();
+  if (!trimmed) {
+    return { success: false, error: 'Recovery key cannot be empty.' };
+  }
+
+  setStoredRecoveryKey(trimmed);
+
+  try {
+    const res = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'update_recovery_key', newRecoveryKey: trimmed }),
+    });
+    const data = await res.json().catch(() => null);
+    if (!res.ok || (data && !data.success)) {
+      return { success: false, error: data?.error || 'Failed to update recovery key on server.' };
+    }
+    return { success: true };
+  } catch {
+    return { success: true };
+  }
 }

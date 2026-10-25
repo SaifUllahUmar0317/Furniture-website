@@ -38,6 +38,7 @@ import {
   resetPasswordWithKey,
   getStoredRecoveryKey,
   setStoredRecoveryKey,
+  updateRecoveryKeyCloud,
 } from '@/lib/admin-auth';
 
 export default function Admin() {
@@ -180,14 +181,18 @@ export default function Admin() {
     }
   };
 
-  const handleUpdateRecoveryKey = (e: React.FormEvent) => {
+  const handleUpdateRecoveryKey = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!customRecoveryKey.trim()) return;
-    setStoredRecoveryKey(customRecoveryKey.trim());
-    setRecoveryKeyMessage('Master recovery key updated successfully!');
-    setCustomRecoveryKey('');
-    setTimeout(() => setRecoveryKeyMessage(null), 3500);
-    showToast('Recovery key updated');
+    const res = await updateRecoveryKeyCloud(customRecoveryKey.trim());
+    if (res.success) {
+      setRecoveryKeyMessage('Master recovery key updated successfully on cloud & local!');
+      setCustomRecoveryKey('');
+      setTimeout(() => setRecoveryKeyMessage(null), 3500);
+      showToast('Recovery key updated');
+    } else {
+      setRecoveryKeyMessage(res.error || 'Failed to update recovery key');
+    }
   };
 
   const handleLogout = () => {

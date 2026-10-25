@@ -28,7 +28,18 @@ export default async function handler(req: IncomingMessage & { body?: any }, res
     await ensureSchema();
 
     let body = req.body;
-    if (typeof body === 'string') {
+    if (!body && (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH')) {
+      const chunks: Buffer[] = [];
+      for await (const chunk of req) {
+        chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+      }
+      const raw = Buffer.concat(chunks).toString('utf-8');
+      try {
+        body = JSON.parse(raw);
+      } catch {
+        body = raw;
+      }
+    } else if (typeof body === 'string') {
       try {
         body = JSON.parse(body);
       } catch {}
@@ -110,6 +121,26 @@ export default async function handler(req: IncomingMessage & { body?: any }, res
         WHERE id = ${auth.id};
       `;
 
+      res.setHeader('Content-Type', 'application/json');
+      res.statusCode = 200;
+      res.end(JSON.stringify({ success: true }));
+      return;
+    }
+
+    if (action === 'update_recovery_key') {
+      const { newRecoveryKey } = body || {};
+      if (!newRecoveryKey || !newRecoveryKey.trim()) {
+        res.statusCode = 400;
+        res.end(JSON.stringify({ success: false, error: 'Recovery key cannot be empty' }));
+        return;
+      }
+      const auth = (await sql`SELECT id FROM admin_auth LIMIT 1;`)[0];
+      await sql`
+        UPDATE admin_auth
+        SET recovery_key = ${newRecoveryKey.trim()},
+            updated_at = NOW()
+        WHERE id = ${auth.id};
+      `;
       res.setHeader('Content-Type', 'application/json');
       res.statusCode = 200;
       res.end(JSON.stringify({ success: true }));

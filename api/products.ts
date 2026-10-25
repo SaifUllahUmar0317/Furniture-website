@@ -29,7 +29,18 @@ export default async function handler(req: IncomingMessage & { query?: any; body
 
     // Parse body if not already parsed
     let body = req.body;
-    if (typeof body === 'string') {
+    if (!body && (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH')) {
+      const chunks: Buffer[] = [];
+      for await (const chunk of req) {
+        chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+      }
+      const raw = Buffer.concat(chunks).toString('utf-8');
+      try {
+        body = JSON.parse(raw);
+      } catch {
+        body = raw;
+      }
+    } else if (typeof body === 'string') {
       try {
         body = JSON.parse(body);
       } catch {}
