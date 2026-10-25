@@ -1,42 +1,13 @@
 import React, { useState } from 'react';
-import { useLocation } from 'wouter';
-import {
-  Package,
-  Image as ImageIcon,
-  FolderKanban,
-  Plus,
-  Trash2,
-  Edit,
-  Eye,
-  LogOut,
-  Save,
-  CheckCircle,
-  X,
-  Upload,
-  Lock,
-  User,
-  ShieldCheck,
-  KeyRound,
-  ArrowRight,
-  EyeOff,
-  RotateCcw,
-} from 'lucide-react';
-import {
-  useLiveProducts,
-  useLiveProjects,
-  useLiveGallery,
-  type ProjectItem,
-  type GalleryItem,
-} from '@/lib/admin-store';
-import { productCategories, type Product } from '@/data/products';
 import {
   isSessionAuthenticated,
   setSessionAuthenticated,
   verifyCredentials,
   changeAdminPassword,
   getAdminUsername,
-  resetToDefault,
-  resetCredentialsNow,
+  resetPasswordWithKey,
+  getStoredRecoveryKey,
+  setStoredRecoveryKey,
 } from '@/lib/admin-auth';
 
 export default function Admin() {
@@ -51,8 +22,19 @@ export default function Admin() {
 
   // Password reset modal state
   const [showResetModal, setShowResetModal] = useState(false);
+  const [resetUsername, setResetUsername] = useState('admin');
   const [recoveryKeyInput, setRecoveryKeyInput] = useState('');
+  const [showResetKey, setShowResetKey] = useState(false);
+  const [resetNewPass, setResetNewPass] = useState('');
+  const [showResetNewPass, setShowResetNewPass] = useState(false);
+  const [resetConfirmPass, setResetConfirmPass] = useState('');
+  const [showResetConfirmPass, setShowResetConfirmPass] = useState(false);
   const [resetStatus, setResetStatus] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [isResetting, setIsResetting] = useState(false);
+
+  // Security tab custom recovery key state
+  const [customRecoveryKey, setCustomRecoveryKey] = useState('');
+  const [recoveryKeyMessage, setRecoveryKeyMessage] = useState<string | null>(null);
 
   // Login form state
   const [usernameInput, setUsernameInput] = useState('');
@@ -268,7 +250,7 @@ export default function Admin() {
           </form>
 
           {showResetModal && (
-            <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
               <div className="bg-card border border-border w-full max-w-md p-6 md:p-8 relative shadow-2xl">
                 <button
                   type="button"
@@ -278,19 +260,19 @@ export default function Admin() {
                   <X className="w-5 h-5" />
                 </button>
 
-                <div className="flex items-center space-x-3 mb-4">
+                <div className="flex items-center space-x-3 mb-5">
                   <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center">
                     <RotateCcw className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <h2 className="font-serif text-xl text-foreground">Reset Admin Password</h2>
-                    <p className="text-xs text-muted-foreground">Restore credentials to factory default</p>
+                    <h2 className="font-serif text-xl text-foreground">Reset Password</h2>
+                    <p className="text-xs text-muted-foreground">Authorized identity verification</p>
                   </div>
                 </div>
 
                 {resetStatus && (
                   <div
-                    className={`p-3 mb-4 border text-xs font-medium ${
+                    className={`p-3.5 mb-5 border text-xs font-medium ${
                       resetStatus.type === 'success'
                         ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400'
                         : 'bg-destructive/10 border-destructive/30 text-destructive'
@@ -302,26 +284,106 @@ export default function Admin() {
 
                 <form onSubmit={handleResetPassword} className="space-y-4">
                   <div>
-                    <label className="text-xs uppercase tracking-wider text-muted-foreground block mb-1">
-                      Master Recovery Phrase
+                    <label className="text-xs uppercase tracking-wider text-muted-foreground block mb-1 font-medium">
+                      Admin Username *
                     </label>
                     <input
                       type="text"
                       required
-                      value={recoveryKeyInput}
-                      onChange={(e) => setRecoveryKeyInput(e.target.value)}
-                      placeholder="Enter recovery key"
+                      value={resetUsername}
+                      onChange={(e) => setResetUsername(e.target.value)}
+                      placeholder="Enter admin username"
                       className="w-full bg-background border border-border px-3 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
                     />
-                    <p className="text-[11px] text-muted-foreground mt-1.5">
-                      Recovery Key: <span className="text-primary font-mono select-all">TehkalHafsa2026Reset</span>
-                    </p>
                   </div>
 
-                  <div className="p-3 bg-muted/40 border border-border/60 text-xs text-muted-foreground space-y-1">
-                    <p className="font-medium text-foreground">Restores default credentials:</p>
-                    <p>• Username: <span className="text-primary font-medium">admin</span></p>
-                    <p>• Password: <span className="text-primary font-medium">hafsa2026</span></p>
+                  <div>
+                    <label className="text-xs uppercase tracking-wider text-muted-foreground block mb-1 font-medium">
+                      Secret Master Recovery Key *
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showResetKey ? 'text' : 'password'}
+                        required
+                        value={recoveryKeyInput}
+                        onChange={(e) => setRecoveryKeyInput(e.target.value)}
+                        placeholder="Enter your secret recovery key"
+                        className="w-full bg-background border border-border px-3 py-2.5 pr-10 text-sm text-foreground focus:border-primary focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowResetKey(!showResetKey)}
+                        className="absolute right-3 top-3 text-muted-foreground hover:text-foreground transition-colors focus:outline-none"
+                        title={showResetKey ? 'Hide key' : 'Show key'}
+                      >
+                        {showResetKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t border-border/50">
+                    <label className="text-xs uppercase tracking-wider text-muted-foreground block mb-1 font-medium">
+                      New Password *
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showResetNewPass ? 'text' : 'password'}
+                        required
+                        minLength={6}
+                        value={resetNewPass}
+                        onChange={(e) => setResetNewPass(e.target.value)}
+                        placeholder="Minimum 6 characters"
+                        className="w-full bg-background border border-border px-3 py-2.5 pr-10 text-sm text-foreground focus:border-primary focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowResetNewPass(!showResetNewPass)}
+                        className="absolute right-3 top-3 text-muted-foreground hover:text-foreground transition-colors focus:outline-none"
+                        title={showResetNewPass ? 'Hide password' : 'Show password'}
+                      >
+                        {showResetNewPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-xs uppercase tracking-wider text-muted-foreground block mb-1 font-medium">
+                      Confirm New Password *
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showResetConfirmPass ? 'text' : 'password'}
+                        required
+                        minLength={6}
+                        value={resetConfirmPass}
+                        onChange={(e) => setResetConfirmPass(e.target.value)}
+                        placeholder="Repeat new password"
+                        className="w-full bg-background border border-border px-3 py-2.5 pr-10 text-sm text-foreground focus:border-primary focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowResetConfirmPass(!showResetConfirmPass)}
+                        className="absolute right-3 top-3 text-muted-foreground hover:text-foreground transition-colors focus:outline-none"
+                        title={showResetConfirmPass ? 'Hide password' : 'Show password'}
+                      >
+                        {showResetConfirmPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-muted/40 border border-border/60 text-xs text-muted-foreground">
+                    <p className="font-light">
+                      Need assistance or lost your recovery key? Contact the workshop directly on{' '}
+                      <a
+                        href="https://wa.me/923165960886"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-primary hover:underline font-medium"
+                      >
+                        WhatsApp (03165960886)
+                      </a>
+                      .
+                    </p>
                   </div>
 
                   <div className="flex items-center space-x-3 pt-2">
@@ -334,10 +396,11 @@ export default function Admin() {
                     </button>
                     <button
                       type="submit"
-                      className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground py-2.5 text-xs uppercase tracking-wider font-semibold transition-colors flex items-center justify-center space-x-1.5"
+                      disabled={isResetting}
+                      className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground py-2.5 text-xs uppercase tracking-wider font-semibold transition-colors flex items-center justify-center space-x-1.5 disabled:opacity-50"
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
-                      <span>Confirm Reset</span>
+                      <span>{isResetting ? 'Updating...' : 'Set Password'}</span>
                     </button>
                   </div>
                 </form>
@@ -345,27 +408,9 @@ export default function Admin() {
             </div>
           )}
 
-          <div className="mt-8 pt-6 border-t border-border/50 text-center text-xs text-muted-foreground space-y-1">
-            <p>Initial Username: <span className="text-primary font-medium">admin</span></p>
-            <p>Initial Password: <span className="text-primary font-medium">hafsa2026</span></p>
-            <div className="pt-2">
-              <button
-                type="button"
-                onClick={() => {
-                  resetCredentialsNow();
-                  setUsernameInput('admin');
-                  setPasswordInput('hafsa2026');
-                  setLoginError('');
-                  showToast('Credentials reset to default: admin / hafsa2026');
-                }}
-                className="inline-flex items-center space-x-1.5 text-xs text-primary hover:underline font-medium focus:outline-none"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>Reset to Default Password (hafsa2026)</span>
-              </button>
-            </div>
-            <p className="text-[11px] text-muted-foreground/60 pt-2">
-              (You can change your password anytime inside the Security tab)
+          <div className="mt-8 pt-6 border-t border-border/50 text-center text-xs text-muted-foreground/60 space-y-1">
+            <p className="font-light">
+              Tehkal Hafsa Furniture • Authorized Workshop Management
             </p>
           </div>
         </div>
@@ -911,6 +956,49 @@ export default function Admin() {
                   className="w-full mt-4 bg-primary hover:bg-foreground text-primary-foreground hover:text-background py-3 uppercase tracking-widest text-xs font-semibold transition-all duration-300"
                 >
                   Update Credentials
+                </button>
+              </form>
+            </div>
+
+            {/* Manage Secret Recovery Key */}
+            <div className="bg-card border border-border p-8 md:p-10 shadow-lg mt-8">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="w-10 h-10 rounded-full border border-primary/30 bg-primary/10 flex items-center justify-center">
+                  <ShieldCheck className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-serif text-xl text-foreground">Master Recovery Key</h3>
+                  <p className="text-xs text-muted-foreground">
+                    Customize your private emergency reset phrase (keep this safe & private).
+                  </p>
+                </div>
+              </div>
+
+              {recoveryKeyMessage && (
+                <div className="p-3.5 mb-5 border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-medium">
+                  {recoveryKeyMessage}
+                </div>
+              )}
+
+              <form onSubmit={handleUpdateRecoveryKey} className="space-y-4">
+                <div>
+                  <label className="text-xs uppercase tracking-wider text-muted-foreground block mb-1">
+                    New Secret Recovery Key
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={customRecoveryKey}
+                    onChange={(e) => setCustomRecoveryKey(e.target.value)}
+                    placeholder="Enter new private master recovery key"
+                    className="w-full bg-background border border-border px-3 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground py-2.5 uppercase tracking-widest text-xs font-semibold transition-all duration-300 border border-border"
+                >
+                  Save New Recovery Key
                 </button>
               </form>
             </div>

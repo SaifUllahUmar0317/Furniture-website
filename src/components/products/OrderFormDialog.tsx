@@ -214,7 +214,7 @@ export function OrderFormDialog({ product, open, onOpenChange }: OrderFormDialog
               </label>
 
               <p className="text-xs leading-relaxed text-muted-foreground">
-                The price and availability are examples. The workshop will confirm them.
+                Our workshop team will review your custom order requirements and confirm details directly with you.
               </p>
 
               {submissionState === 'error' && (

@@ -61,10 +61,7 @@ export default function Products() {
           </p>
         </FadeIn>
 
-        <div className="mb-10 border border-primary/30 bg-card/70 px-5 py-4 text-sm leading-relaxed text-foreground/75">
-          <span className="font-medium text-primary">Sample product list.</span>{' '}
-          Prices, details, and availability are examples only. The workshop will confirm the final price and stock.
-        </div>
+
 
         <div className="mb-7 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex gap-3 overflow-x-auto pb-2 lg:pb-0">

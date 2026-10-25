@@ -6,6 +6,7 @@ import { Route, Switch, Router as WouterRouter } from 'wouter';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { Noise } from '@/components/layout/Noise';
+import { FloatingWhatsApp } from '@/components/layout/FloatingWhatsApp';
 
 import Home from '@/pages/Home';
 import About from '@/pages/About';
@@ -50,6 +51,8 @@ function Router() {
         </Switch>
       </main>
       <Footer />
+      {/* Floating WhatsApp Action Button on Every Page */}
+      <FloatingWhatsApp />
     </div>
   );
 }
@@ -59,10 +62,10 @@ function App() {
     <ThemeProvider defaultTheme="dark" storageKey="tehkal-theme">
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
+          <Toaster />
+          <WouterRouter>
             <Router />
           </WouterRouter>
-          <Toaster />
         </TooltipProvider>
       </QueryClientProvider>
     </ThemeProvider>

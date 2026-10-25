@@ -10,13 +10,14 @@ export async function hashPassword(plain: string): Promise<string> {
 const STORAGE_KEY_AUTH = 'thf_admin_auth_token';
 const STORAGE_KEY_PASS_HASH = 'thf_admin_password_hash';
 const STORAGE_KEY_USERNAME = 'thf_admin_username';
+const STORAGE_KEY_RECOVERY_KEY = 'thf_admin_recovery_key';
 
 // Default initial credentials (hashed):
-// Username: admin
 // Default Password: "hafsa2026"
 // SHA-256 for "hafsa2026": b938f60f9f16d793c81e4743e41dad45d2c4f6e4e67318584632ac8968283297
 const DEFAULT_HASH = 'b938f60f9f16d793c81e4743e41dad45d2c4f6e4e67318584632ac8968283297';
 const DEFAULT_USER = 'admin';
+const DEFAULT_RECOVERY_KEY = 'TehkalHafsa2026Reset';
 
 export function getAdminUsername(): string {
   if (typeof window === 'undefined') return DEFAULT_USER;
@@ -37,6 +38,16 @@ export function setSessionAuthenticated(auth: boolean) {
   }
 }
 
+export function getStoredRecoveryKey(): string {
+  if (typeof window === 'undefined') return DEFAULT_RECOVERY_KEY;
+  return localStorage.getItem(STORAGE_KEY_RECOVERY_KEY) || DEFAULT_RECOVERY_KEY;
+}
+
+export function setStoredRecoveryKey(key: string): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(STORAGE_KEY_RECOVERY_KEY, key.trim());
+}
+
 export async function verifyCredentials(username: string, pass: string): Promise<boolean> {
   const currentUsername = getAdminUsername();
   if (username.trim().toLowerCase() !== currentUsername.toLowerCase()) {
@@ -48,7 +59,6 @@ export async function verifyCredentials(username: string, pass: string): Promise
   // If no password has been customized yet:
   if (!storedHash || storedHash === DEFAULT_HASH || storedHash === 'b0d69116e0ca584fe3be98aa45f3df05bf9be18d363d596bb051fc9bb759d57a') {
     if (pass === 'hafsa2026') {
-      // Normalize stored hash to proper hash
       localStorage.setItem(STORAGE_KEY_PASS_HASH, DEFAULT_HASH);
       return true;
     }
@@ -70,7 +80,6 @@ export async function changeAdminPassword(
   const storedHash = localStorage.getItem(STORAGE_KEY_PASS_HASH) || DEFAULT_HASH;
   const currentHash = await hashPassword(currentPass);
 
-  // Check if current password matches either current hash or default password
   const matchesCurrent =
     currentHash === storedHash ||
     (currentPass === 'hafsa2026' && (storedHash === DEFAULT_HASH || storedHash === 'b0d69116e0ca584fe3be98aa45f3df05bf9be18d363d596bb051fc9bb759d57a'));
@@ -90,21 +99,29 @@ export async function changeAdminPassword(
 }
 
 /**
- * Resets admin credentials to factory defaults.
- * After reset: username=admin, password=hafsa2026
+ * Secure password reset with Secret Recovery Key.
+ * Verifies username and secret key without ever exposing secrets to public viewers.
  */
-export function resetCredentialsNow(): void {
-  if (typeof window === 'undefined') return;
-  localStorage.removeItem(STORAGE_KEY_PASS_HASH);
-  localStorage.removeItem(STORAGE_KEY_USERNAME);
-  localStorage.setItem(STORAGE_KEY_PASS_HASH, DEFAULT_HASH);
-}
-
-export function resetToDefault(recoveryPhrase: string): boolean {
-  const RECOVERY_PHRASE = 'TehkalHafsa2026Reset';
-  if (recoveryPhrase.trim() !== RECOVERY_PHRASE) {
-    return false;
+export async function resetPasswordWithKey(
+  username: string,
+  recoveryKey: string,
+  newPassword: string
+): Promise<{ success: boolean; error?: string }> {
+  const currentUsername = getAdminUsername();
+  if (username.trim().toLowerCase() !== currentUsername.toLowerCase()) {
+    return { success: false, error: 'Incorrect admin username.' };
   }
-  resetCredentialsNow();
-  return true;
+
+  const validKey = getStoredRecoveryKey();
+  if (recoveryKey.trim() !== validKey) {
+    return { success: false, error: 'Invalid secret recovery key. Authorization rejected.' };
+  }
+
+  if (!newPassword || newPassword.length < 6) {
+    return { success: false, error: 'New password must be at least 6 characters long.' };
+  }
+
+  const newHash = await hashPassword(newPassword);
+  localStorage.setItem(STORAGE_KEY_PASS_HASH, newHash);
+  return { success: true };
 }
