@@ -1,3 +1,0 @@
-- [Hero theme and image treatment](hero-theme.md) — Keep the home hero visibly photographic, with overlay and text colors that adapt to the active theme.
-- [Plain-language website copy](plain-language-copy.md) — Use common words and short sentences across customer-facing pages, especially About, Services, Projects, Why Us, and Questions.
-- [Temporary sample product catalog](sample-product-catalog.md) — Keep demo product details clearly labeled until the owner can replace them through admin tools.
