@@ -1,4 +1,34 @@
 import React, { useState } from 'react';
+import { useLocation } from 'wouter';
+import {
+  Package,
+  Image as ImageIcon,
+  FolderKanban,
+  Plus,
+  Trash2,
+  Edit,
+  Eye,
+  LogOut,
+  Save,
+  CheckCircle,
+  X,
+  Upload,
+  Lock,
+  User,
+  ShieldCheck,
+  KeyRound,
+  ArrowRight,
+  EyeOff,
+  RotateCcw,
+} from 'lucide-react';
+import {
+  useLiveProducts,
+  useLiveProjects,
+  useLiveGallery,
+  type ProjectItem,
+  type GalleryItem,
+} from '@/lib/admin-store';
+import { productCategories, type Product } from '@/data/products';
 import {
   isSessionAuthenticated,
   setSessionAuthenticated,
@@ -95,24 +125,60 @@ export default function Admin() {
     }
   };
 
-  const handleResetPassword = (e: React.FormEvent) => {
+  const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setResetStatus(null);
-    const ok = resetToDefault(recoveryKeyInput);
-    if (ok) {
-      setResetStatus({
-        type: 'success',
-        text: 'Credentials have been reset to factory default! (Username: admin, Password: hafsa2026)',
-      });
-      setUsernameInput('admin');
-      setPasswordInput('hafsa2026');
-      setRecoveryKeyInput('');
-    } else {
+    setIsResetting(true);
+
+    if (resetNewPass !== resetConfirmPass) {
       setResetStatus({
         type: 'error',
-        text: 'Invalid recovery key. Please enter the master key.',
+        text: 'New passwords do not match.',
       });
+      setIsResetting(false);
+      return;
     }
+
+    try {
+      const res = await resetPasswordWithKey(resetUsername, recoveryKeyInput, resetNewPass);
+      if (res.success) {
+        setResetStatus({
+          type: 'success',
+          text: 'Password successfully updated! You can now sign in with your new password.',
+        });
+        setUsernameInput(resetUsername);
+        setPasswordInput(resetNewPass);
+        setRecoveryKeyInput('');
+        setResetNewPass('');
+        setResetConfirmPass('');
+        showToast('Password updated. Please sign in.');
+        setTimeout(() => {
+          setShowResetModal(false);
+        }, 1800);
+      } else {
+        setResetStatus({
+          type: 'error',
+          text: res.error || 'Authorization failed. Please verify your secret recovery key.',
+        });
+      }
+    } catch {
+      setResetStatus({
+        type: 'error',
+        text: 'An error occurred during password reset.',
+      });
+    } finally {
+      setIsResetting(false);
+    }
+  };
+
+  const handleUpdateRecoveryKey = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!customRecoveryKey.trim()) return;
+    setStoredRecoveryKey(customRecoveryKey.trim());
+    setRecoveryKeyMessage('Master recovery key updated successfully!');
+    setCustomRecoveryKey('');
+    setTimeout(() => setRecoveryKeyMessage(null), 3500);
+    showToast('Recovery key updated');
   };
 
   const handleLogout = () => {
