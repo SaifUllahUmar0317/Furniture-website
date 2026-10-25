@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useTheme } from '@/lib/theme-provider';
-import { Sun, Moon, Menu, X } from 'lucide-react';
+import { Sun, Moon, Menu, X, Shield } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const NAV_LINKS = [
