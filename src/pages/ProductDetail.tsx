@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Link, useParams } from 'wouter';
 import { ArrowLeft, ArrowRight, Check, X } from 'lucide-react';
 import { FadeIn } from '@/components/ui/fade-in';
@@ -51,7 +51,7 @@ export default function ProductDetail() {
 
             <div className="mt-7 border-y border-border py-5">
               <span className="block text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                Sample {product.priceQualifier === 'starting' ? 'starting price' : 'price'} · PKR
+                Sample {product.priceQualifier === 'starting' ? 'starting price' : 'price'} Â· PKR
               </span>
               <p className="mt-2 font-serif text-3xl text-foreground">
                 {product.priceQualifier === 'starting' ? 'From ' : ''}
@@ -72,7 +72,7 @@ export default function ProductDetail() {
                   <span className="text-rose-700 dark:text-rose-400">Not in stock</span>
                 </>
               )}
-              <span className="text-muted-foreground">· sample details</span>
+              <span className="text-muted-foreground">Â· sample details</span>
             </div>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -91,10 +91,6 @@ export default function ProductDetail() {
                 Ask a question
               </Link>
             </div>
-
-            <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
-              The details and availability shown here are samples. The workshop will confirm your order details.
-            </p>
 
             <section className="mt-10">
               <h2 className="mb-4 font-serif text-2xl text-foreground">Details</h2>
@@ -157,3 +153,4 @@ export default function ProductDetail() {
     </div>
   );
 }
+

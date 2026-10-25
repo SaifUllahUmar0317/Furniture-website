@@ -1,6 +1,6 @@
 import React from 'react';
 import { FadeIn } from '@/components/ui/fade-in';
-import aboutImg from '@assets/generated_images/about.jpg';
+import aboutImg from '@assets/generated_images/owner_about.jpg';
 import galleryImg from '@assets/generated_images/gallery1.jpg';
 
 export default function About() {
@@ -14,8 +14,24 @@ export default function About() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center mb-32">
           <FadeIn direction="right">
-            <div className="relative aspect-[3/4] overflow-hidden">
-              <img src={aboutImg} alt="Workshop" className="w-full h-full object-cover" />
+            {/* Owner portrait with editorial overlay */}
+            <div className="relative aspect-[3/4] overflow-hidden rounded-sm group shadow-2xl">
+              <img
+                src={aboutImg}
+                alt="The owner at Tehkal Hafsa Furniture workshop"
+                className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+              />
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent pointer-events-none" />
+              {/* Editorial caption */}
+              <div className="absolute bottom-0 left-0 right-0 p-6">
+                <p className="text-white/95 font-serif text-xl leading-snug">At the Workshop</p>
+                <p className="text-white/55 text-xs uppercase tracking-widest mt-1">
+                  Tehkal Hafsa Furniture &middot; Peshawar
+                </p>
+              </div>
+              {/* Decorative gold inset border */}
+              <div className="absolute top-4 left-4 right-4 bottom-4 border border-primary/40 pointer-events-none" />
             </div>
           </FadeIn>
           <FadeIn direction="left" className="space-y-8 text-foreground/70 font-light leading-relaxed text-lg">
