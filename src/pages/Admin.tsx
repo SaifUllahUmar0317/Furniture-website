@@ -97,6 +97,15 @@ export default function Admin() {
   const [editingGallery, setEditingGallery] = useState<GalleryItem | null>(null);
   const [isNewGallery, setIsNewGallery] = useState(false);
 
+  // Custom in-app delete confirmation modal state
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{
+    type: 'product' | 'project' | 'gallery';
+    id: number;
+    title: string;
+    image?: string;
+    category?: string;
+  } | null>(null);
+
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
@@ -216,7 +225,7 @@ export default function Admin() {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 6 * 1024 * 1024) {
-        alert('File size exceeds 6MB. Please select an optimized image.');
+        showToast('File size exceeds 6MB. Please select an optimized image.');
         return;
       }
       const reader = new FileReader();
@@ -507,10 +516,14 @@ export default function Admin() {
   };
 
   const deleteProduct = (id: number) => {
-    if (confirm('Are you sure you want to remove this product from the website?')) {
-      setProducts(products.filter((p) => p.id !== id));
-      showToast('Product removed.');
-    }
+    const item = products.find((p) => p.id === id);
+    setDeleteConfirmation({
+      type: 'product',
+      id,
+      title: item?.name || 'this product',
+      image: item?.image,
+      category: item?.category,
+    });
   };
 
   // --- Handlers for Projects ---
@@ -530,10 +543,14 @@ export default function Admin() {
   };
 
   const deleteProject = (id: number) => {
-    if (confirm('Remove this project from the showcase?')) {
-      setProjects(projects.filter((p) => p.id !== id));
-      showToast('Project removed.');
-    }
+    const item = projects.find((p) => p.id === id);
+    setDeleteConfirmation({
+      type: 'project',
+      id,
+      title: item?.title || 'this project',
+      image: item?.img,
+      category: item?.type,
+    });
   };
 
   // --- Handlers for Gallery ---
@@ -553,10 +570,31 @@ export default function Admin() {
   };
 
   const deleteGallery = (id: number) => {
-    if (confirm('Delete this photo from the gallery?')) {
+    const item = gallery.find((g) => g.id === id);
+    setDeleteConfirmation({
+      type: 'gallery',
+      id,
+      title: item?.title || 'this photo',
+      image: item?.src,
+    });
+  };
+
+  const executeDelete = () => {
+    if (!deleteConfirmation) return;
+    const { type, id, title } = deleteConfirmation;
+
+    if (type === 'product') {
+      setProducts(products.filter((p) => p.id !== id));
+      showToast(`"${title}" removed from catalog.`);
+    } else if (type === 'project') {
+      setProjects(projects.filter((p) => p.id !== id));
+      showToast(`"${title}" project removed.`);
+    } else if (type === 'gallery') {
       setGallery(gallery.filter((g) => g.id !== id));
-      showToast('Photo deleted.');
+      showToast('Photo deleted from gallery.');
     }
+
+    setDeleteConfirmation(null);
   };
 
   return (
@@ -1552,6 +1590,91 @@ export default function Admin() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {/* MODAL: BEAUTIFUL CUSTOM IN-APP CONFIRM REMOVAL DIALOG */}
+      {deleteConfirmation && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200"
+          onClick={() => setDeleteConfirmation(null)}
+        >
+          <div
+            className="relative w-full max-w-md bg-card border border-border/80 shadow-2xl p-6 md:p-8 rounded-sm overflow-hidden text-center animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Top gold accent line */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
+
+            {/* Close 'X' button */}
+            <button
+              type="button"
+              onClick={() => setDeleteConfirmation(null)}
+              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground p-1 transition-colors rounded-sm"
+              aria-label="Close dialog"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Trash icon with soft red glow */}
+            <div className="w-14 h-14 rounded-full mx-auto mb-4 bg-destructive/10 border border-destructive/30 flex items-center justify-center text-destructive">
+              <Trash2 className="w-6 h-6" />
+            </div>
+
+            {/* Sub-label */}
+            <span className="text-[11px] uppercase tracking-[0.25em] text-primary block mb-1 font-semibold">
+              Confirm Removal
+            </span>
+
+            {/* Main title */}
+            <h3 className="font-serif text-2xl text-foreground mb-3 leading-snug">
+              Remove {deleteConfirmation.type === 'product' ? 'Product' : deleteConfirmation.type === 'project' ? 'Project' : 'Photo'}?
+            </h3>
+
+            {/* Item Preview Card */}
+            <div className="flex items-center gap-3 p-3 bg-muted/40 border border-border/60 rounded mb-4 text-left">
+              {deleteConfirmation.image && (
+                <img
+                  src={deleteConfirmation.image}
+                  alt={deleteConfirmation.title}
+                  className="w-14 h-14 object-cover rounded shrink-0 border border-border/50 bg-background"
+                />
+              )}
+              <div className="min-w-0 flex-1">
+                <p className="font-medium text-foreground text-sm truncate">
+                  {deleteConfirmation.title}
+                </p>
+                {deleteConfirmation.category && (
+                  <span className="text-[10px] uppercase tracking-wider text-muted-foreground block mt-0.5">
+                    {deleteConfirmation.category}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Notice text */}
+            <p className="text-foreground/70 text-xs leading-relaxed mb-6">
+              Are you sure you want to remove this item from the website? This action cannot be undone.
+            </p>
+
+            {/* Actions */}
+            <div className="flex items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => setDeleteConfirmation(null)}
+                className="flex-1 px-5 py-2.5 border border-border text-foreground hover:bg-muted text-xs uppercase tracking-widest font-medium transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={executeDelete}
+                className="flex-1 flex items-center justify-center gap-2 px-5 py-2.5 bg-destructive text-destructive-foreground hover:bg-destructive/90 text-xs uppercase tracking-widest font-semibold transition-all shadow-md hover:shadow-lg"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Yes, Remove</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
