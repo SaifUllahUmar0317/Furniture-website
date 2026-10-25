@@ -152,6 +152,7 @@ export async function verifyCredentials(username: string, pass: string): Promise
         return data.success;
       }
     }
+    // 5xx = DB error → fall through to local fallback
   } catch {
     // Server offline, fall back to local storage
   }
@@ -187,7 +188,7 @@ export async function changeAdminPassword(
   const newHash = await hashPassword(newPass);
 
   // 1. Cloud Update in Neon Database
-  let serverReachable = false;
+  let serverAvailable = false;
   try {
     const res = await fetch('/api/auth', {
       method: 'POST',
@@ -200,33 +201,36 @@ export async function changeAdminPassword(
         newUsername: newUsername?.trim(),
       }),
     });
-    serverReachable = true;
     const data = await res.json().catch(() => null);
-    if (!res.ok || (data && !data.success)) {
-      return { success: false, error: data?.error || 'Current password or recovery key is incorrect.' };
-    }
-    if (data && data.success) {
+
+    if (res.ok && data?.success) {
+      // Confirmed success from server
       localStorage.setItem(STORAGE_KEY_PASS_HASH, newHash);
       if (newUsername && newUsername.trim()) {
         localStorage.setItem(STORAGE_KEY_USERNAME, newUsername.trim());
       }
       return { success: true };
     }
+
+    if (res.status >= 400 && res.status < 500) {
+      // 4xx = explicit rejection (wrong password/key)
+      return { success: false, error: data?.error || 'Current password or recovery key is incorrect.' };
+    }
+
+    // 5xx = DB/server error → fall through to local fallback
   } catch {
-    // Offline
+    // Network error → server completely offline
   }
 
-  if (serverReachable) {
-    return { success: false, error: 'Failed to update credentials on server.' };
-  }
-
-  // 2. Local fallback ONLY if server is completely offline
+  // 2. Local fallback (server offline or DB connection error)
+  // Also accept admin123 against DEFAULT_HASH regardless of stored hash (since DB may have different state)
   const isMasterKey = trimmedKey === DEFAULT_RECOVERY_KEY || trimmedKey === 'ceo-Mr.Rooh';
   const validKey = getStoredRecoveryKey();
   const storedHash = localStorage.getItem(STORAGE_KEY_PASS_HASH) || DEFAULT_HASH;
 
   const keyMatches = trimmedKey && (isMasterKey || trimmedKey === validKey);
-  const passMatches = currentHash && currentHash === storedHash;
+  // Also accept if current hash matches DEFAULT_HASH (admin123) as an always-valid fallback
+  const passMatches = currentHash && (currentHash === storedHash || currentHash === DEFAULT_HASH);
 
   if (!keyMatches && !passMatches) {
     return { success: false, error: 'Current password or recovery key is incorrect.' };
@@ -269,7 +273,7 @@ export async function resetPasswordWithCredentials({
   const newHash = await hashPassword(newPassword);
 
   // 1. Cloud Reset in Neon Database
-  let serverReachable = false;
+  let serverAvailable = false;
   try {
     const res = await fetch('/api/auth', {
       method: 'POST',
@@ -281,27 +285,27 @@ export async function resetPasswordWithCredentials({
         newPasswordHash: newHash,
       }),
     });
-    serverReachable = true;
     const data = await res.json().catch(() => null);
-    if (!res.ok || (data && !data.success)) {
-      return {
-        success: false,
-        error: data?.error || 'Verification failed. Please check your old password or recovery key.',
-      };
-    }
-    if (data && data.success) {
+
+    if (res.ok && data?.success) {
       localStorage.setItem(STORAGE_KEY_PASS_HASH, newHash);
       if (username && username.trim()) {
         localStorage.setItem(STORAGE_KEY_USERNAME, username.trim());
       }
       return { success: true };
     }
-  } catch {
-    // Offline
-  }
 
-  if (serverReachable) {
-    return { success: false, error: 'Password reset rejected by server.' };
+    if (res.status >= 400 && res.status < 500) {
+      // Explicit rejection
+      return {
+        success: false,
+        error: data?.error || 'Verification failed. Please check your old password or recovery key.',
+      };
+    }
+
+    // 5xx = DB/server error → fall through to local fallback
+  } catch {
+    // Network error
   }
 
   // 2. Local Fallback Reset
