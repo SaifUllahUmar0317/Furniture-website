@@ -140,48 +140,55 @@ export default function Products() {
                           product.stock === 'in-stock' ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-700 dark:text-rose-400'
                         }`}
                       >
-                        {product.stock === 'in-stock' ? 'Available' : 'Not available'} · sample
+                        {product.stock === 'in-stock' ? 'Available' : 'Made to Order'}
                       </span>
                     </div>
 
-                    <Link href={`/products/${product.slug}`} className="font-serif text-2xl leading-snug text-foreground transition-colors hover:text-primary">
+                    <Link
+                      href={`/products/${product.slug}`}
+                      className="font-serif text-2xl leading-snug text-foreground transition-colors hover:text-primary min-h-[3.75rem] flex items-center line-clamp-2"
+                      title={product.name}
+                    >
                       {product.name}
                     </Link>
 
-                    <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 border-y border-border py-3 text-xs leading-relaxed">
+                    <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 border-y border-border py-3 text-xs leading-relaxed min-h-[4.75rem] content-start">
                       {product.specs.slice(0, 2).map((spec) => (
-                        <div key={spec.label}>
-                          <span className="block uppercase tracking-widest text-muted-foreground">{spec.label}</span>
-                          <span className="mt-1 block text-foreground/80">{spec.value}</span>
+                        <div key={spec.label} className="min-w-0">
+                          <span className="block uppercase tracking-widest text-muted-foreground truncate">{spec.label}</span>
+                          <span className="mt-1 block text-foreground/80 line-clamp-2">{spec.value}</span>
                         </div>
                       ))}
                     </div>
 
-                    <div className="mt-4 flex items-end justify-between gap-4">
-                      <div>
-                        <span className="block text-[0.65rem] uppercase tracking-widest text-muted-foreground">
-                          Sample {product.priceQualifier === 'starting' ? 'starting price' : 'price'}
-                        </span>
-                        <span className="mt-1 block text-xl font-medium text-foreground">
-                          {product.priceQualifier === 'starting' ? 'From ' : ''}
-                          {formatPrice(product.price)}
-                        </span>
+                    {/* Bottom Area: mt-auto guarantees prices and buttons align on the exact same horizontal line */}
+                    <div className="mt-auto pt-5">
+                      <div className="flex items-end justify-between gap-4">
+                        <div>
+                          <span className="block text-[0.65rem] uppercase tracking-widest text-muted-foreground">
+                            {product.priceQualifier === 'starting' ? 'Starting Price' : 'Price'}
+                          </span>
+                          <span className="mt-1 block text-xl font-medium text-foreground">
+                            {product.priceQualifier === 'starting' ? 'From ' : ''}
+                            {formatPrice(product.price)}
+                          </span>
+                        </div>
+                        <Link
+                          href={`/products/${product.slug}`}
+                          className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-primary hover:text-foreground shrink-0"
+                        >
+                          View details <ArrowRight size={14} />
+                        </Link>
                       </div>
-                      <Link
-                        href={`/products/${product.slug}`}
-                        className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-primary hover:text-foreground"
-                      >
-                        View details <ArrowRight size={14} />
-                      </Link>
-                    </div>
 
-                    <button
-                      type="button"
-                      onClick={() => setOrderProduct(product)}
-                      className="mt-5 w-full bg-primary px-5 py-3.5 text-xs font-medium uppercase tracking-[0.18em] text-primary-foreground transition-colors hover:bg-primary/90"
-                    >
-                      {product.stock === 'in-stock' ? 'Order Now' : 'Request Availability'}
-                    </button>
+                      <button
+                        type="button"
+                        onClick={() => setOrderProduct(product)}
+                        className="mt-4 w-full bg-primary px-5 py-3.5 text-xs font-medium uppercase tracking-[0.18em] text-primary-foreground transition-colors hover:bg-primary/90"
+                      >
+                        {product.stock === 'in-stock' ? 'Order Now' : 'Request Availability'}
+                      </button>
+                    </div>
                   </div>
                 </article>
               </FadeIn>

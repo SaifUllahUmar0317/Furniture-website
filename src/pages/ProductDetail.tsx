@@ -57,7 +57,7 @@ export default function ProductDetail() {
                 {product.priceQualifier === 'starting' ? 'From ' : ''}
                 {formatPrice(product.price)}
               </p>
-              <p className="mt-2 text-xs text-muted-foreground">This is a sample price. We will confirm the price after you choose the materials, size, and finish.</p>
+              <p className="mt-2 text-xs text-muted-foreground">Prices may vary based on your custom choices of materials, sizing, and polish finish.</p>
             </div>
 
             <div className="mt-5 flex items-center gap-2 text-sm">
@@ -72,7 +72,6 @@ export default function ProductDetail() {
                   <span className="text-rose-700 dark:text-rose-400">Not in stock</span>
                 </>
               )}
-              <span className="text-muted-foreground">Â· sample details</span>
             </div>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -132,7 +131,7 @@ export default function ProductDetail() {
                 <span>
                   <span className="block font-serif text-lg text-foreground transition-colors group-hover:text-primary">{item.name}</span>
                   <span className="mt-1 block text-xs text-muted-foreground">
-                    Sample {item.priceQualifier === 'starting' ? 'starting price' : 'price'}
+                    {item.priceQualifier === 'starting' ? 'Starting Price' : 'Price'}
                   </span>
                   <span className="block text-sm text-muted-foreground">
                     {item.priceQualifier === 'starting' ? 'From ' : ''}
