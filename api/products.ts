@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from 'http';
-import { getDb, ensureSchema } from './lib/db';
-import { products as defaultProducts } from '../src/data/products';
+import { getDb, ensureSchema } from './_lib/db.js';
+import { products as defaultProducts } from './_lib/default-products.js';
 
 export default async function handler(req: IncomingMessage & { query?: any; body?: any }, res: ServerResponse & { status?: any; json?: any }) {
   // Set CORS headers

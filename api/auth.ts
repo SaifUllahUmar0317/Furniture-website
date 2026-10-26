@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'http';
-import { getDb, ensureSchema } from './lib/db';
+import { getDb, ensureSchema } from './_lib/db.js';
 
 const DEFAULT_HASH = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9'; // 'admin123'
 const DEFAULT_RECOVERY_KEY = 'ceo-Mr.Rooh';

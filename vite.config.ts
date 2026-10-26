@@ -15,6 +15,10 @@ function apiDevPlugin(): Plugin {
         const urlPath = req.url.split('?')[0];
         const route = urlPath.replace('/api/', '');
 
+        if (!route || route.startsWith('_')) {
+          return next();
+        }
+
         try {
           if (['POST', 'PUT', 'PATCH'].includes(req.method || '')) {
             const chunks: Buffer[] = [];

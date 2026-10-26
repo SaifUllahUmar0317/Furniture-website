@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'http';
-import { getDb, ensureSchema } from './lib/db';
+import { getDb, ensureSchema } from './_lib/db.js';
 
 export default async function handler(req: IncomingMessage & { query?: any; body?: any }, res: ServerResponse) {
   res.setHeader('Access-Control-Allow-Credentials', 'true');

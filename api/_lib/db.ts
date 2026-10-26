@@ -1,11 +1,11 @@
-import https from 'https';
+import https from 'node:https';
 import { neon, neonConfig } from '@neondatabase/serverless';
 
-// Public routable IPs for Neon AWS US-East-1 endpoint to bypass CGNAT 100.62.x.x unroutable DNS entries on residential Windows connections
+// Public routable IPs for Neon AWS US-East-1 endpoint to bypass CGNAT 100.62.x.x unroutable DNS entries
 const PUBLIC_NEON_IPS = ['34.205.173.201', '52.2.183.93'];
 let ipIndex = 0;
 
-if (typeof process !== 'undefined' && !process.env.VERCEL) {
+if (typeof process !== 'undefined') {
   neonConfig.fetchFunction = (url: string, opts: any = {}) => {
     return new Promise((resolve, reject) => {
       const parsed = new URL(url);
@@ -23,7 +23,7 @@ if (typeof process !== 'undefined' && !process.env.VERCEL) {
           method: opts.method || 'GET',
           headers: headers,
           servername: parsed.hostname,
-          timeout: 8000,
+          timeout: 10000,
         },
         (res) => {
           const chunks: Buffer[] = [];
