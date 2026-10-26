@@ -1,14 +1,3 @@
-import bedImg from '@assets/generated_images/bed.jpg';
-import sofaImg from '@assets/generated_images/sofa.jpg';
-import diningImg from '@assets/generated_images/dining.jpg';
-import wardrobeImg from '@assets/generated_images/wardrobe.jpg';
-import tvUnitImg from '@assets/generated_images/tv_unit.jpg';
-import officeImg from '@assets/generated_images/office.jpg';
-import kitchenImg from '@assets/generated_images/kitchen.jpg';
-import coffeeTableImg from '@assets/generated_images/coffee_table.jpg';
-import doorImg from '@assets/generated_images/door.jpg';
-import bookshelfImg from '@assets/generated_images/bookshelf.jpg';
-
 export type Product = {
   id: number;
   slug: string;
@@ -29,7 +18,7 @@ export const products: Product[] = [
     slug: 'monarch-velvet-sofa',
     name: 'Velvet 3-Seat Sofa',
     category: 'Living Room',
-    image: sofaImg,
+    image: '/images/sofa.jpg',
     badge: 'Popular',
     price: 185000,
     stock: 'in-stock',
@@ -46,7 +35,7 @@ export const products: Product[] = [
     slug: 'walnut-majesty-dining-table',
     name: 'Walnut Dining Table',
     category: 'Dining',
-    image: diningImg,
+    image: '/images/dining.jpg',
     badge: 'Custom',
     price: 215000,
     stock: 'in-stock',
@@ -63,7 +52,7 @@ export const products: Product[] = [
     slug: 'royal-oasis-king-bed',
     name: 'King Bed with Upholstered Headboard',
     category: 'Bedroom',
-    image: bedImg,
+    image: '/images/bed.jpg',
     price: 240000,
     stock: 'in-stock',
     description: 'A king bed with a shaped headboard and strong hardwood frame. Choose from custom fabric options.',
@@ -79,7 +68,7 @@ export const products: Product[] = [
     slug: 'executive-obsidian-desk',
     name: 'Executive Office Desk',
     category: 'Office',
-    image: officeImg,
+    image: '/images/office.jpg',
     badge: 'Quality Build',
     price: 135000,
     stock: 'in-stock',
@@ -96,7 +85,7 @@ export const products: Product[] = [
     slug: 'luminous-walk-in-wardrobe',
     name: 'Custom Walk-in Wardrobe',
     category: 'Storage',
-    image: wardrobeImg,
+    image: '/images/wardrobe.jpg',
     price: 290000,
     priceQualifier: 'starting',
     stock: 'out-of-stock',
@@ -113,7 +102,7 @@ export const products: Product[] = [
     slug: 'midnight-marble-kitchen',
     name: 'Custom Kitchen',
     category: 'Kitchen',
-    image: kitchenImg,
+    image: '/images/kitchen.jpg',
     badge: 'Custom',
     price: 450000,
     priceQualifier: 'starting',
@@ -131,7 +120,7 @@ export const products: Product[] = [
     slug: 'floating-horizon-tv-unit',
     name: 'Floating TV Unit',
     category: 'Living Room',
-    image: tvUnitImg,
+    image: '/images/tv_unit.jpg',
     price: 95000,
     stock: 'in-stock',
     description: 'A simple TV unit with hidden cable space, drawers, and an open shelf.',
@@ -147,7 +136,7 @@ export const products: Product[] = [
     slug: 'artisan-glass-coffee-table',
     name: 'Glass-Top Coffee Table',
     category: 'Living Room',
-    image: coffeeTableImg,
+    image: '/images/coffee_table.jpg',
     price: 68000,
     stock: 'in-stock',
     description: 'A coffee table with a clear glass top and a carefully finished wood base.',
@@ -163,7 +152,7 @@ export const products: Product[] = [
     slug: 'grand-mahogany-entrance-door',
     name: 'Mahogany Front Door',
     category: 'Doors',
-    image: doorImg,
+    image: '/images/door.jpg',
     price: 85000,
     priceQualifier: 'starting',
     stock: 'out-of-stock',
@@ -180,7 +169,7 @@ export const products: Product[] = [
     slug: 'scholars-library-wall',
     name: 'Wall-to-Wall Bookshelf',
     category: 'Storage',
-    image: bookshelfImg,
+    image: '/images/bookshelf.jpg',
     price: 155000,
     priceQualifier: 'starting',
     stock: 'in-stock',
