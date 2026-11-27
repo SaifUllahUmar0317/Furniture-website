@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useTheme } from '@/lib/theme-provider';
-import { useAccount } from '@/lib/account-context';
+import { useAdminDevice } from '@/lib/admin-device';
 import { useCart } from '@/lib/cart-context';
 import {
   Sun,
@@ -11,7 +11,6 @@ import {
   Shield,
   ChevronDown,
   ShoppingBag,
-  User,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -37,7 +36,7 @@ export function Navbar() {
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const { theme, setTheme } = useTheme();
-  const { account, isAdmin, openAuthModal } = useAccount();
+  const [isAdminDevice] = useAdminDevice();
   const { openCart, totalItemsCount } = useCart();
 
   const isAboutActive = ABOUT_LINKS.some((item) => location === item.href);
@@ -199,34 +198,8 @@ export function Navbar() {
                 {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
               </button>
 
-              {/* User Account / Google Sign-In Button */}
-              <button
-                onClick={openAuthModal}
-                className="flex items-center gap-2 p-1.5 px-2.5 rounded-full border border-border/60 hover:border-primary/50 bg-card hover:bg-muted/50 text-xs text-foreground/85 transition-colors focus:outline-none"
-                title={account ? `Signed in: ${account.email}` : 'Sign in with Google'}
-              >
-                {account?.picture ? (
-                  <img
-                    src={account.picture}
-                    alt=""
-                    className="w-5 h-5 rounded-full object-cover border border-border shrink-0"
-                  />
-                ) : (
-                  <div
-                    className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-semibold shrink-0 ${
-                      account ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-                    }`}
-                  >
-                    {account ? account.email.charAt(0).toUpperCase() : <User size={12} />}
-                  </div>
-                )}
-                <span className="text-[11px] uppercase tracking-wider font-medium max-w-[110px] truncate hidden xl:inline">
-                  {account ? (isAdmin ? 'Admin' : account.name || 'Account') : 'Sign In'}
-                </span>
-              </button>
-
-              {/* Admin Portal Icon (RENDERED ONLY FOR Roohk700@gmail.com) */}
-              {isAdmin && (
+              {/* Admin Portal Icon (Visible ONLY when opened in Admin's Browser) */}
+              {isAdminDevice && (
                 <Link
                   href="/admin"
                   title="Admin Workshop Portal"
@@ -267,8 +240,8 @@ export function Navbar() {
               )}
             </button>
 
-            {/* Mobile Admin Icon (RENDERED ONLY FOR Roohk700@gmail.com) */}
-            {isAdmin && (
+            {/* Mobile Admin Icon (Visible ONLY when opened in Admin's Browser) */}
+            {isAdminDevice && (
               <Link
                 href="/admin"
                 className={`p-1.5 transition-colors ${
@@ -330,8 +303,8 @@ export function Navbar() {
 
               {/* Action Icons */}
               <div className="flex items-center space-x-2">
-                {/* Admin Icon in Mobile Header (ONLY FOR Roohk700@gmail.com) */}
-                {isAdmin && (
+                {/* Admin Icon in Mobile Header (Visible ONLY on Admin's Browser) */}
+                {isAdminDevice && (
                   <Link
                     href="/admin"
                     onClick={() => setMobileMenuOpen(false)}
@@ -436,32 +409,8 @@ export function Navbar() {
                   </div>
                 </div>
 
-                {/* Google Account Sign-In / User Row */}
-                <div className="pt-2 border-t border-border/50">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      openAuthModal();
-                    }}
-                    className="flex items-center justify-between w-full font-serif text-lg tracking-wide text-foreground hover:text-primary transition-colors py-1"
-                  >
-                    <div className="flex items-center gap-2.5 truncate">
-                      <User size={19} className="text-primary shrink-0" />
-                      <span className="truncate">
-                        {account ? account.email : 'Sign In with Google'}
-                      </span>
-                    </div>
-                    {isAdmin && (
-                      <span className="text-[10px] bg-primary/15 text-primary border border-primary/30 px-2 py-0.5 uppercase tracking-wider font-sans font-medium shrink-0">
-                        Admin
-                      </span>
-                    )}
-                  </button>
-                </div>
-
-                {/* Admin Portal Link (RENDERED ONLY FOR Roohk700@gmail.com) */}
-                {isAdmin && (
+                {/* Admin Portal Link (Visible ONLY when opened in Admin's Browser) */}
+                {isAdminDevice && (
                   <div className="pt-2 border-t border-border/50">
                     <Link
                       href="/admin"

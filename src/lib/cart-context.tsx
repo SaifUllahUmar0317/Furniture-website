@@ -1,6 +1,5 @@
-import React, { createContext, useContext, useEffect, useState, useMemo, useRef } from 'react';
+import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import { type Product } from '@/data/products';
-import { useAccount } from './account-context';
 
 export interface CartItem {
   cartId: string;
@@ -35,22 +34,13 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-function getStorageKey(email?: string | null): string {
-  if (email) {
-    return `thf_cart_${email.trim().toLowerCase()}`;
-  }
-  return 'thf_cart_guest';
-}
+const CART_STORAGE_KEY = 'thf_cart_items';
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const { account } = useAccount();
-  const activeEmail = account?.email || null;
-  const storageKey = getStorageKey(activeEmail);
-
   const [items, setItems] = useState<CartItem[]>(() => {
     if (typeof window === 'undefined') return [];
     try {
-      const stored = localStorage.getItem(storageKey);
+      const stored = localStorage.getItem(CART_STORAGE_KEY);
       return stored ? JSON.parse(stored) : [];
     } catch {
       return [];
@@ -58,64 +48,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   });
 
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // When active account changes, load that account's preserved cart
+  // Persist items locally whenever changed
   useEffect(() => {
-    const key = getStorageKey(activeEmail);
-    let loadedFromLocal: CartItem[] = [];
-
     try {
-      const stored = localStorage.getItem(key);
-      if (stored) {
-        loadedFromLocal = JSON.parse(stored);
-      }
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
     } catch {}
-
-    setItems(loadedFromLocal);
-
-    // Also fetch cloud preserved cart if user is signed in
-    if (activeEmail) {
-      fetch(`/api/cart?email=${encodeURIComponent(activeEmail)}`)
-        .then((res) => (res.ok ? res.json() : null))
-        .then((data) => {
-          if (data && Array.isArray(data.items)) {
-            if (data.items.length > 0) {
-              setItems(data.items);
-              localStorage.setItem(key, JSON.stringify(data.items));
-            } else if (loadedFromLocal.length > 0) {
-              // Sync local to cloud if cloud was empty
-              fetch('/api/cart', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: activeEmail, items: loadedFromLocal }),
-              }).catch(() => {});
-            }
-          }
-        })
-        .catch(() => {});
-    }
-  }, [activeEmail]);
-
-  // Persist items locally and sync to cloud
-  useEffect(() => {
-    const key = getStorageKey(activeEmail);
-    try {
-      localStorage.setItem(key, JSON.stringify(items));
-    } catch {}
-
-    // Debounced cloud sync to Neon PostgreSQL
-    if (activeEmail) {
-      if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
-      syncTimeoutRef.current = setTimeout(() => {
-        fetch('/api/cart', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: activeEmail, items }),
-        }).catch(() => {});
-      }, 800);
-    }
-  }, [items, activeEmail]);
+  }, [items]);
 
   const addToCart = (product: Product, quantity = 1, selectedImage?: string) => {
     const img = selectedImage || product.image;

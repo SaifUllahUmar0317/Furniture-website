@@ -9,7 +9,6 @@ import { Footer } from '@/components/layout/Footer';
 import { Noise } from '@/components/layout/Noise';
 import { FloatingWhatsApp } from '@/components/layout/FloatingWhatsApp';
 import { CartDrawer } from '@/components/cart/CartDrawer';
-import { GoogleAuthModal } from '@/components/auth/GoogleAuthModal';
 
 import Home from '@/pages/Home';
 import About from '@/pages/About';
@@ -27,7 +26,6 @@ import NotFound from '@/pages/not-found';
 import Admin from '@/pages/Admin';
 
 import { ThemeProvider } from '@/lib/theme-provider';
-import { AccountProvider } from '@/lib/account-context';
 import { CartProvider } from '@/lib/cart-context';
 
 const queryClient = new QueryClient();
@@ -83,8 +81,6 @@ function Router() {
       <FloatingWhatsApp />
       {/* Global Shopping Cart Drawer */}
       <CartDrawer />
-      {/* Global Google Authentication Modal */}
-      <GoogleAuthModal />
     </div>
   );
 }
@@ -94,14 +90,12 @@ function App() {
     <ThemeProvider defaultTheme="dark" storageKey="tehkal-theme">
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          <AccountProvider>
-            <CartProvider>
-              <Toaster />
-              <WouterRouter>
-                <Router />
-              </WouterRouter>
-            </CartProvider>
-          </AccountProvider>
+          <CartProvider>
+            <Toaster />
+            <WouterRouter>
+              <Router />
+            </WouterRouter>
+          </CartProvider>
         </TooltipProvider>
       </QueryClientProvider>
     </ThemeProvider>

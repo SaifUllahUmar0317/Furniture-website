@@ -42,12 +42,17 @@ import {
   setStoredRecoveryKey,
   updateRecoveryKeyCloud,
 } from '@/lib/admin-auth';
-import { useAccount, ADMIN_GOOGLE_EMAIL } from '@/lib/account-context';
+import { setAdminDevice, useAdminDevice } from '@/lib/admin-device';
 
 export default function Admin() {
   const [, setLocation] = useLocation();
-  const { account, isAdmin, openAuthModal } = useAccount();
+  const [isAdminDevice, setIsAdminDevice] = useAdminDevice();
   const [isAuthenticated, setIsAuthenticated] = useState(() => isSessionAuthenticated());
+
+  // Automatically mark this browser as an admin device when visiting /admin
+  React.useEffect(() => {
+    setAdminDevice(true);
+  }, []);
 
   // Password visibility states
   const [showLoginPassword, setShowLoginPassword] = useState(false);
@@ -139,6 +144,7 @@ export default function Admin() {
       const ok = await verifyCredentials(usernameInput, passwordInput);
       if (ok) {
         setSessionAuthenticated(true);
+        setAdminDevice(true);
         setIsAuthenticated(true);
         setLoginError('');
       } else {
@@ -336,57 +342,6 @@ export default function Admin() {
       reader.readAsDataURL(file);
     });
   };
-
-  // GOOGLE ACCOUNT ADMIN GATE
-  // Strictly gates the entire admin portal to Roohk700@gmail.com
-  if (!isAdmin) {
-    return (
-      <div className="min-h-screen pt-28 sm:pt-36 pb-16 sm:pb-20 flex items-center justify-center px-4 sm:px-6 bg-background">
-        <div className="w-full max-w-md bg-card border border-border p-6 sm:p-8 md:p-10 shadow-2xl relative text-center">
-          <div className="w-14 h-14 rounded-full border border-primary/30 bg-primary/5 flex items-center justify-center mx-auto mb-4">
-            <Lock className="w-7 h-7 text-primary" />
-          </div>
-          <span className="text-primary text-xs uppercase tracking-[0.3em] font-medium block mb-2">
-            Restricted Access
-          </span>
-          <h1 className="font-serif text-2xl sm:text-3xl text-foreground">Workshop Admin Gate</h1>
-          <p className="text-muted-foreground text-xs sm:text-sm mt-3 font-light leading-relaxed">
-            The administrative management panel is strictly restricted. You must be signed in with the authorized administrator Google Account:
-          </p>
-          <div className="mt-4 p-3 bg-muted/60 border border-border text-xs font-mono font-medium text-foreground rounded">
-            {ADMIN_GOOGLE_EMAIL}
-          </div>
-          {account && (
-            <p className="text-xs text-muted-foreground mt-3">
-              Currently connected: <span className="text-foreground font-semibold">{account.email}</span>
-            </p>
-          )}
-
-          <div className="mt-6 space-y-3">
-            <button
-              type="button"
-              onClick={openAuthModal}
-              className="w-full bg-primary hover:bg-foreground text-primary-foreground hover:text-background py-3.5 uppercase tracking-widest text-xs font-semibold transition-all duration-300 flex items-center justify-center space-x-2 shadow-sm"
-            >
-              <User className="w-4 h-4" />
-              <span>Connect Admin Google Account</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setLocation('/')}
-              className="w-full border border-border hover:bg-muted py-2.5 uppercase tracking-widest text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Return to Storefront
-            </button>
-          </div>
-
-          <div className="mt-8 pt-6 border-t border-border/50 text-center text-[11px] text-muted-foreground/60">
-            Tehkal Hafsa Furniture • Khyber Pakhtunkhwa
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   // LOGIN SCREEN
   if (!isAuthenticated) {
@@ -848,6 +803,22 @@ export default function Admin() {
               <span className="text-primary text-xs uppercase tracking-[0.3em] font-medium">
                 Authorized Admin: {getAdminUsername()}
               </span>
+              <button
+                type="button"
+                onClick={() => {
+                  if (isAdminDevice) {
+                    setIsAdminDevice(false);
+                    showToast('Admin symbol hidden on this browser.');
+                  } else {
+                    setIsAdminDevice(true);
+                    showToast('Admin symbol enabled in navbar.');
+                  }
+                }}
+                className="text-[11px] text-muted-foreground hover:text-foreground border border-border px-2.5 py-0.5 rounded transition-colors"
+                title="Toggle whether the Admin Shield symbol is shown on this browser's navbar"
+              >
+                Navbar Symbol: {isAdminDevice ? 'Visible' : 'Hidden'}
+              </button>
             </div>
             <h1 className="font-serif text-3xl md:text-5xl text-foreground mt-2">
               Website Manager

@@ -1,10 +1,25 @@
-import React from 'react';
-import { Link } from 'wouter';
+import React, { useState } from 'react';
+import { Link, useLocation } from 'wouter';
 import { Facebook, MapPin, Mail } from 'lucide-react';
 import { FaTiktok } from 'react-icons/fa';
+import { useAdminDevice, setAdminDevice } from '@/lib/admin-device';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const [, setLocation] = useLocation();
+  const [isAdminDevice] = useAdminDevice();
+  const [clickCount, setClickCount] = useState(0);
+
+  const handleCopyrightClick = () => {
+    const next = clickCount + 1;
+    if (next >= 3) {
+      setAdminDevice(true);
+      setLocation('/admin');
+    } else {
+      setClickCount(next);
+      setTimeout(() => setClickCount(0), 1200);
+    }
+  };
 
   return (
     <footer className="relative border-t border-border bg-background pt-16 sm:pt-20 lg:pt-24 pb-10 sm:pb-12 overflow-hidden">
@@ -63,7 +78,7 @@ export function Footer() {
                 { label: 'Questions', path: '/faq' },
                 { label: 'Privacy Policy', path: '/privacy' },
                 { label: 'Terms', path: '/terms' },
-                { label: 'Admin Portal', path: '/admin' },
+                ...(isAdminDevice ? [{ label: 'Admin Portal', path: '/admin' }] : []),
               ].map((item) => (
                 <li key={item.path}>
                   <Link
@@ -119,7 +134,11 @@ export function Footer() {
         </div>
 
         <div className="pt-6 sm:pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0">
-          <p className="text-foreground/40 text-xs tracking-widest uppercase text-center sm:text-left">
+          <p
+            onClick={handleCopyrightClick}
+            className="text-foreground/40 text-xs tracking-widest uppercase text-center sm:text-left cursor-pointer select-none hover:text-foreground/60 transition-colors"
+            title="Tehkal Hafsa Furniture"
+          >
             &copy; {currentYear} Tehkal Hafsa Furniture. All rights reserved.
           </p>
           <p className="text-foreground/40 text-xs tracking-widest uppercase">

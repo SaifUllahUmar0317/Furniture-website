@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useCart, type CartItem } from '@/lib/cart-context';
-import { useAccount } from '@/lib/account-context';
 import { formatPrice } from '@/data/products';
 import { CartCheckoutDialog } from './CartCheckoutDialog';
 import {
@@ -12,7 +11,6 @@ import {
   CheckSquare,
   Square,
   ArrowRight,
-  UserCheck,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -31,8 +29,6 @@ export function CartDrawer() {
     selectedTotalPrice,
     allTotalPrice,
   } = useCart();
-
-  const { account, openAuthModal } = useAccount();
 
   const [checkoutModalOpen, setCheckoutModalOpen] = useState(false);
   const [checkoutType, setCheckoutType] = useState<'selected' | 'all'>('selected');
@@ -84,24 +80,10 @@ export function CartDrawer() {
                 </button>
               </div>
 
-              {/* Account Preservation Banner */}
-              <div className="px-4 py-2.5 bg-muted/40 border-b border-border/60 text-[11px] flex items-center justify-between shrink-0">
-                {account ? (
-                  <span className="text-muted-foreground flex items-center gap-1.5 truncate">
-                    <UserCheck size={13} className="text-emerald-500 shrink-0" />
-                    <span className="truncate">Saved for: <strong className="text-foreground">{account.email}</strong></span>
-                  </span>
-                ) : (
-                  <div className="flex items-center justify-between w-full">
-                    <span className="text-muted-foreground">Guest session</span>
-                    <button
-                      onClick={openAuthModal}
-                      className="text-primary hover:underline font-medium uppercase tracking-wider text-[10px]"
-                    >
-                      Sign in to sync cart
-                    </button>
-                  </div>
-                )}
+              {/* Cart Preservation Banner */}
+              <div className="px-4 py-2 bg-muted/30 border-b border-border/50 text-[11px] text-muted-foreground flex items-center justify-between shrink-0">
+                <span>Items preserved automatically on this device</span>
+                <span className="text-primary font-medium">{items.length} item{items.length === 1 ? '' : 's'}</span>
               </div>
 
               {/* Items List */}

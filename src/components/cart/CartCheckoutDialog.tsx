@@ -8,7 +8,6 @@ import {
 } from '@/components/ui/dialog';
 import { type CartItem } from '@/lib/cart-context';
 import { formatPrice } from '@/data/products';
-import { useAccount } from '@/lib/account-context';
 import { Check, MessageSquare, Send, CheckCircle2 } from 'lucide-react';
 
 interface CartCheckoutDialogProps {
@@ -26,11 +25,9 @@ export function CartCheckoutDialog({
   orderType,
   onOrderCompleted,
 }: CartCheckoutDialogProps) {
-  const { account } = useAccount();
-
-  const [customerName, setCustomerName] = useState(account?.name || '');
+  const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
-  const [customerEmail, setCustomerEmail] = useState(account?.email || '');
+  const [customerEmail, setCustomerEmail] = useState('');
   const [deliveryCity, setDeliveryCity] = useState('Peshawar');
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [customNotes, setCustomNotes] = useState('');
