@@ -1,7 +1,18 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useTheme } from '@/lib/theme-provider';
-import { Sun, Moon, Menu, X, Shield, ChevronDown } from 'lucide-react';
+import { useAccount } from '@/lib/account-context';
+import { useCart } from '@/lib/cart-context';
+import {
+  Sun,
+  Moon,
+  Menu,
+  X,
+  Shield,
+  ChevronDown,
+  ShoppingBag,
+  User,
+} from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const PRIMARY_LINKS = [
@@ -26,6 +37,9 @@ export function Navbar() {
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const { theme, setTheme } = useTheme();
+  const { account, isAdmin, openAuthModal } = useAccount();
+  const { openCart, totalItemsCount } = useCart();
+
   const isAboutActive = ABOUT_LINKS.some((item) => location === item.href);
 
   useEffect(() => {
@@ -160,6 +174,21 @@ export function Navbar() {
 
             {/* Right Action Icons & Buttons */}
             <div className="flex items-center gap-3 border-l border-border/40 pl-5">
+              {/* Shopping Cart Button */}
+              <button
+                onClick={openCart}
+                className="relative p-2 transition-colors focus:outline-none rounded-full hover:bg-muted/50 text-foreground/75 hover:text-primary"
+                aria-label={`Shopping Cart (${totalItemsCount} pieces)`}
+                title="View Cart"
+              >
+                <ShoppingBag size={18} />
+                {totalItemsCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 bg-primary text-primary-foreground text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center animate-in zoom-in-75">
+                    {totalItemsCount}
+                  </span>
+                )}
+              </button>
+
               {/* Theme Toggle */}
               <button
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
@@ -170,19 +199,47 @@ export function Navbar() {
                 {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
               </button>
 
-              {/* Admin Portal Icon */}
-              <Link
-                href="/admin"
-                title="Admin Workshop Portal"
-                aria-label="Admin Portal"
-                className={`p-2 transition-colors focus:outline-none rounded-full hover:bg-muted/50 ${
-                  location === '/admin'
-                    ? 'text-primary bg-primary/10'
-                    : 'text-foreground/70 hover:text-primary'
-                }`}
+              {/* User Account / Google Sign-In Button */}
+              <button
+                onClick={openAuthModal}
+                className="flex items-center gap-2 p-1.5 px-2.5 rounded-full border border-border/60 hover:border-primary/50 bg-card hover:bg-muted/50 text-xs text-foreground/85 transition-colors focus:outline-none"
+                title={account ? `Signed in: ${account.email}` : 'Sign in with Google'}
               >
-                <Shield size={17} />
-              </Link>
+                {account?.picture ? (
+                  <img
+                    src={account.picture}
+                    alt=""
+                    className="w-5 h-5 rounded-full object-cover border border-border shrink-0"
+                  />
+                ) : (
+                  <div
+                    className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-semibold shrink-0 ${
+                      account ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                    }`}
+                  >
+                    {account ? account.email.charAt(0).toUpperCase() : <User size={12} />}
+                  </div>
+                )}
+                <span className="text-[11px] uppercase tracking-wider font-medium max-w-[110px] truncate hidden xl:inline">
+                  {account ? (isAdmin ? 'Admin' : account.name || 'Account') : 'Sign In'}
+                </span>
+              </button>
+
+              {/* Admin Portal Icon (RENDERED ONLY FOR Roohk700@gmail.com) */}
+              {isAdmin && (
+                <Link
+                  href="/admin"
+                  title="Admin Workshop Portal"
+                  aria-label="Admin Portal"
+                  className={`p-2 transition-colors focus:outline-none rounded-full hover:bg-muted/50 ${
+                    location === '/admin'
+                      ? 'text-primary bg-primary/10'
+                      : 'text-foreground/70 hover:text-primary'
+                  }`}
+                >
+                  <Shield size={17} />
+                </Link>
+              )}
 
               {/* Contact Us CTA Button */}
               <Link
@@ -194,20 +251,38 @@ export function Navbar() {
             </div>
           </nav>
 
-          {/* Mobile Toggle & Action Links */}
-          <div className="flex items-center space-x-2 lg:hidden z-50">
-            <Link
-              href="/admin"
-              className={`p-1.5 transition-colors ${
-                location === '/admin'
-                  ? 'text-primary'
-                  : 'text-foreground/80 hover:text-primary'
-              }`}
-              title="Admin Portal"
-              aria-label="Admin Portal"
+          {/* Mobile Action Icons (Cart, Theme, Admin if authorized, Menu toggle) */}
+          <div className="flex items-center space-x-1.5 lg:hidden z-50">
+            {/* Mobile Shopping Cart Button */}
+            <button
+              onClick={openCart}
+              className="relative p-1.5 transition-colors focus:outline-none text-foreground/80 hover:text-primary"
+              aria-label="Cart"
             >
-              <Shield size={19} />
-            </Link>
+              <ShoppingBag size={19} />
+              {totalItemsCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                  {totalItemsCount}
+                </span>
+              )}
+            </button>
+
+            {/* Mobile Admin Icon (RENDERED ONLY FOR Roohk700@gmail.com) */}
+            {isAdmin && (
+              <Link
+                href="/admin"
+                className={`p-1.5 transition-colors ${
+                  location === '/admin'
+                    ? 'text-primary'
+                    : 'text-foreground/80 hover:text-primary'
+                }`}
+                title="Admin Portal"
+                aria-label="Admin Portal"
+              >
+                <Shield size={19} />
+              </Link>
+            )}
+
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
               className="p-1.5 transition-colors focus:outline-none text-foreground/80 hover:text-primary"
@@ -215,6 +290,7 @@ export function Navbar() {
             >
               {theme === 'dark' ? <Sun size={19} /> : <Moon size={19} />}
             </button>
+
             <button
               className="p-1.5 transition-colors text-foreground hover:text-primary"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -226,7 +302,7 @@ export function Navbar() {
         </div>
       </header>
 
-      {/* Full-Screen Mobile Drawer Menu (Rendered outside header to prevent backdrop-filter & stacking context clipping) */}
+      {/* Full-Screen Mobile Drawer Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -252,21 +328,25 @@ export function Navbar() {
                 </span>
               </Link>
 
-              {/* Action Icons: Admin, Theme, Close */}
+              {/* Action Icons */}
               <div className="flex items-center space-x-2">
-                <Link
-                  href="/admin"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`p-1.5 transition-colors ${
-                    location === '/admin'
-                      ? 'text-primary'
-                      : 'text-foreground/80 hover:text-primary'
-                  }`}
-                  title="Admin Portal"
-                  aria-label="Admin Portal"
-                >
-                  <Shield size={19} />
-                </Link>
+                {/* Admin Icon in Mobile Header (ONLY FOR Roohk700@gmail.com) */}
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`p-1.5 transition-colors ${
+                      location === '/admin'
+                        ? 'text-primary'
+                        : 'text-foreground/80 hover:text-primary'
+                    }`}
+                    title="Admin Portal"
+                    aria-label="Admin Portal"
+                  >
+                    <Shield size={19} />
+                  </Link>
+                )}
+
                 <button
                   onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                   className="p-1.5 transition-colors focus:outline-none text-foreground/80 hover:text-primary"
@@ -309,7 +389,29 @@ export function Navbar() {
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-border/50">
+                {/* Mobile Cart Link */}
+                <div className="pt-2 border-t border-border/50">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      openCart();
+                    }}
+                    className="flex items-center justify-between w-full font-serif text-xl tracking-wide text-foreground hover:text-primary transition-colors py-1"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <ShoppingBag size={20} className="text-primary" />
+                      <span>Shopping Cart</span>
+                    </div>
+                    {totalItemsCount > 0 && (
+                      <span className="bg-primary text-primary-foreground text-xs px-2.5 py-0.5 rounded-full font-sans font-semibold">
+                        {totalItemsCount}
+                      </span>
+                    )}
+                  </button>
+                </div>
+
+                <div className="pt-2 border-t border-border/50">
                   <span className="text-[10px] uppercase tracking-[0.25em] text-primary font-medium block mb-3">
                     Company & Craft
                   </span>
@@ -334,19 +436,45 @@ export function Navbar() {
                   </div>
                 </div>
 
-                {/* Admin Portal Link */}
-                <div className="pt-4 border-t border-border/50">
-                  <Link
-                    href="/admin"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center gap-2.5 font-serif text-lg tracking-wide transition-colors ${
-                      location === '/admin' ? 'text-primary' : 'text-foreground/75 hover:text-primary'
-                    }`}
+                {/* Google Account Sign-In / User Row */}
+                <div className="pt-2 border-t border-border/50">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      openAuthModal();
+                    }}
+                    className="flex items-center justify-between w-full font-serif text-lg tracking-wide text-foreground hover:text-primary transition-colors py-1"
                   >
-                    <Shield size={19} />
-                    <span>Admin Workshop Portal</span>
-                  </Link>
+                    <div className="flex items-center gap-2.5 truncate">
+                      <User size={19} className="text-primary shrink-0" />
+                      <span className="truncate">
+                        {account ? account.email : 'Sign In with Google'}
+                      </span>
+                    </div>
+                    {isAdmin && (
+                      <span className="text-[10px] bg-primary/15 text-primary border border-primary/30 px-2 py-0.5 uppercase tracking-wider font-sans font-medium shrink-0">
+                        Admin
+                      </span>
+                    )}
+                  </button>
                 </div>
+
+                {/* Admin Portal Link (RENDERED ONLY FOR Roohk700@gmail.com) */}
+                {isAdmin && (
+                  <div className="pt-2 border-t border-border/50">
+                    <Link
+                      href="/admin"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-2.5 font-serif text-lg tracking-wide transition-colors ${
+                        location === '/admin' ? 'text-primary' : 'text-foreground/75 hover:text-primary'
+                      }`}
+                    >
+                      <Shield size={19} />
+                      <span>Admin Workshop Portal</span>
+                    </Link>
+                  </div>
+                )}
 
                 {/* Contact Us CTA Button */}
                 <div className="pt-4 pb-8">

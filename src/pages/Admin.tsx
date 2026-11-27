@@ -42,9 +42,11 @@ import {
   setStoredRecoveryKey,
   updateRecoveryKeyCloud,
 } from '@/lib/admin-auth';
+import { useAccount, ADMIN_GOOGLE_EMAIL } from '@/lib/account-context';
 
 export default function Admin() {
   const [, setLocation] = useLocation();
+  const { account, isAdmin, openAuthModal } = useAccount();
   const [isAuthenticated, setIsAuthenticated] = useState(() => isSessionAuthenticated());
 
   // Password visibility states
@@ -297,6 +299,94 @@ export default function Admin() {
       reader.readAsDataURL(file);
     }
   };
+
+  // Convert multiple uploaded images into persistent base64 data URLs
+  const handleMultipleImageUpload = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    onAdd: (base64List: string[]) => void
+  ) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    const validFiles = files.filter((f) => {
+      if (f.size > 6 * 1024 * 1024) {
+        showToast(`Skipped ${f.name} (exceeds 6MB limit)`);
+        return false;
+      }
+      return true;
+    });
+
+    if (!validFiles.length) return;
+
+    let loadedCount = 0;
+    const results: string[] = [];
+
+    validFiles.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          results.push(event.target.result as string);
+        }
+        loadedCount++;
+        if (loadedCount === validFiles.length) {
+          onAdd(results);
+          showToast(`Added ${results.length} angle image(s).`);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // GOOGLE ACCOUNT ADMIN GATE
+  // Strictly gates the entire admin portal to Roohk700@gmail.com
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen pt-28 sm:pt-36 pb-16 sm:pb-20 flex items-center justify-center px-4 sm:px-6 bg-background">
+        <div className="w-full max-w-md bg-card border border-border p-6 sm:p-8 md:p-10 shadow-2xl relative text-center">
+          <div className="w-14 h-14 rounded-full border border-primary/30 bg-primary/5 flex items-center justify-center mx-auto mb-4">
+            <Lock className="w-7 h-7 text-primary" />
+          </div>
+          <span className="text-primary text-xs uppercase tracking-[0.3em] font-medium block mb-2">
+            Restricted Access
+          </span>
+          <h1 className="font-serif text-2xl sm:text-3xl text-foreground">Workshop Admin Gate</h1>
+          <p className="text-muted-foreground text-xs sm:text-sm mt-3 font-light leading-relaxed">
+            The administrative management panel is strictly restricted. You must be signed in with the authorized administrator Google Account:
+          </p>
+          <div className="mt-4 p-3 bg-muted/60 border border-border text-xs font-mono font-medium text-foreground rounded">
+            {ADMIN_GOOGLE_EMAIL}
+          </div>
+          {account && (
+            <p className="text-xs text-muted-foreground mt-3">
+              Currently connected: <span className="text-foreground font-semibold">{account.email}</span>
+            </p>
+          )}
+
+          <div className="mt-6 space-y-3">
+            <button
+              type="button"
+              onClick={openAuthModal}
+              className="w-full bg-primary hover:bg-foreground text-primary-foreground hover:text-background py-3.5 uppercase tracking-widest text-xs font-semibold transition-all duration-300 flex items-center justify-center space-x-2 shadow-sm"
+            >
+              <User className="w-4 h-4" />
+              <span>Connect Admin Google Account</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setLocation('/')}
+              className="w-full border border-border hover:bg-muted py-2.5 uppercase tracking-widest text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Return to Storefront
+            </button>
+          </div>
+
+          <div className="mt-8 pt-6 border-t border-border/50 text-center text-[11px] text-muted-foreground/60">
+            Tehkal Hafsa Furniture • Khyber Pakhtunkhwa
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // LOGIN SCREEN
   if (!isAuthenticated) {
@@ -589,6 +679,22 @@ export default function Admin() {
     e.preventDefault();
     if (!editingProduct) return;
 
+    // Filter clean additional images
+    const cleanImages = (editingProduct.images || [])
+      .map((u) => (typeof u === 'string' ? u.trim() : ''))
+      .filter(Boolean);
+
+    // If primary image is empty but additional images exist, use first additional image
+    const primaryImage = editingProduct.image?.trim() || cleanImages[0] || '/images/sofa.jpg';
+    // Ensure primary image is not duplicated in images list
+    const filteredAdditional = cleanImages.filter((img) => img !== primaryImage);
+
+    const productPayload: Product = {
+      ...editingProduct,
+      image: primaryImage,
+      images: filteredAdditional,
+    };
+
     if (isNewProduct) {
       const newId = products.length ? Math.max(...products.map((p) => p.id)) + 1 : 1;
       const slug =
@@ -596,7 +702,7 @@ export default function Admin() {
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, '-')
           .replace(/(^-|-$)+/g, '') || `product-${newId}`;
-      const toAdd: Product = { ...editingProduct, id: newId, slug };
+      const toAdd: Product = { ...productPayload, id: newId, slug };
       setProducts([toAdd, ...products]);
       showToast('Product added successfully!');
       fetch('/api/products', {
@@ -605,12 +711,12 @@ export default function Admin() {
         body: JSON.stringify(toAdd),
       }).catch(() => {});
     } else {
-      setProducts(products.map((p) => (p.id === editingProduct.id ? editingProduct : p)));
+      setProducts(products.map((p) => (p.id === editingProduct.id ? productPayload : p)));
       showToast('Product updated successfully!');
       fetch('/api/products', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(editingProduct),
+        body: JSON.stringify(productPayload),
       }).catch(() => {});
     }
     setEditingProduct(null);
@@ -844,6 +950,7 @@ export default function Admin() {
                     name: '',
                     category: 'Living Room',
                     image: '',
+                    images: [],
                     badge: '',
                     price: 50000,
                     stock: 'in-stock',
@@ -880,6 +987,11 @@ export default function Admin() {
                       <span className="absolute top-2 left-2 bg-background/90 text-[10px] uppercase tracking-wider px-2 py-1 text-primary border border-border">
                         {p.category}
                       </span>
+                      {Array.isArray(p.images) && p.images.length > 0 && (
+                        <span className="absolute bottom-2 left-2 bg-black/75 text-white text-[10px] px-2 py-0.5 rounded backdrop-blur-sm">
+                          {1 + p.images.length} photos
+                        </span>
+                      )}
                       {p.stock === 'out-of-stock' && (
                         <span className="absolute top-2 right-2 bg-destructive text-destructive-foreground text-[10px] uppercase tracking-wider px-2 py-1">
                           Out of Stock
@@ -900,7 +1012,10 @@ export default function Admin() {
                     <button
                       onClick={() => {
                         setIsNewProduct(false);
-                        setEditingProduct(p);
+                        setEditingProduct({
+                          ...p,
+                          images: Array.isArray(p.images) ? [...p.images] : [],
+                        });
                       }}
                       className="flex items-center space-x-1.5 text-xs text-foreground/80 hover:text-primary transition-colors"
                     >
@@ -1377,29 +1492,36 @@ export default function Admin() {
                 </div>
               </div>
 
-              {/* Image Uploader & Preview */}
-              <div>
-                <label className="text-xs uppercase tracking-wider text-muted-foreground block mb-1">
-                  Product Image *
-                </label>
-                <div className="flex items-center gap-4">
-                  <div className="w-20 h-20 bg-muted border border-border shrink-0 overflow-hidden">
+              {/* PRIMARY THUMBNAIL IMAGE */}
+              <div className="border border-border p-4 bg-muted/20 space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs uppercase tracking-wider text-foreground font-semibold flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-primary inline-block" />
+                    Primary Thumbnail Image (Cover) *
+                  </label>
+                  <span className="text-[11px] text-muted-foreground font-light">
+                    Catalog front cover photo
+                  </span>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                  <div className="w-24 h-24 bg-muted border border-border shrink-0 overflow-hidden relative">
                     {editingProduct.image ? (
                       <img
                         src={editingProduct.image}
-                        alt="Preview"
+                        alt="Primary Preview"
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[10px] text-muted-foreground">
-                        No image
+                      <div className="w-full h-full flex items-center justify-center text-[10px] text-muted-foreground text-center p-1">
+                        No Thumbnail
                       </div>
                     )}
                   </div>
-                  <div className="flex-1 space-y-2">
-                    <label className="inline-flex items-center space-x-2 bg-secondary text-secondary-foreground px-4 py-2 text-xs uppercase tracking-wider cursor-pointer hover:bg-secondary/80">
+                  <div className="flex-1 w-full space-y-2">
+                    <label className="inline-flex items-center space-x-2 bg-secondary text-secondary-foreground px-3.5 py-2 text-xs uppercase tracking-wider cursor-pointer hover:bg-secondary/80 border border-border transition-colors">
                       <Upload className="w-3.5 h-3.5" />
-                      <span>Upload from Device</span>
+                      <span>Upload Primary Thumbnail</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -1413,7 +1535,7 @@ export default function Admin() {
                     </label>
                     <input
                       type="text"
-                      placeholder="Or enter Image URL"
+                      placeholder="Or enter image URL (e.g. /images/sofa.jpg or https://...)"
                       value={editingProduct.image}
                       onChange={(e) =>
                         setEditingProduct({ ...editingProduct, image: e.target.value })
@@ -1422,6 +1544,155 @@ export default function Admin() {
                     />
                   </div>
                 </div>
+              </div>
+
+              {/* ADDITIONAL ANGLES & COLORS (FIVERR GIG SLIDER) */}
+              <div className="border border-border p-4 bg-muted/10 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <label className="text-xs uppercase tracking-wider text-foreground font-semibold block">
+                      Additional Angles & Colors (Slidable Showcase)
+                    </label>
+                    <p className="text-[11px] text-muted-foreground font-light">
+                      Add photos from different angles (side, back, close-up) and color variants. These become slidable with left/right arrows like a Fiverr gig!
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <label className="inline-flex items-center space-x-1.5 bg-primary/10 text-primary border border-primary/30 px-3 py-1.5 text-xs uppercase tracking-wider cursor-pointer hover:bg-primary/20 transition-colors">
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>Upload Angles</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="hidden"
+                        onChange={(e) =>
+                          handleMultipleImageUpload(e, (newImages) => {
+                            const current = editingProduct.images || [];
+                            setEditingProduct({
+                              ...editingProduct,
+                              images: [...current, ...newImages],
+                            });
+                          })
+                        }
+                      />
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setEditingProduct({
+                          ...editingProduct,
+                          images: [...(editingProduct.images || []), ''],
+                        })
+                      }
+                      className="text-xs text-primary hover:underline border border-dashed border-primary/40 px-3 py-1.5 uppercase tracking-wider"
+                    >
+                      + Add URL Slot
+                    </button>
+                  </div>
+                </div>
+
+                {/* List of additional angle images */}
+                {(!editingProduct.images || editingProduct.images.length === 0) ? (
+                  <div className="p-4 border border-dashed border-border text-center text-xs text-muted-foreground bg-background/50">
+                    No additional angles added yet. Click &quot;Upload Angles&quot; or &quot;+ Add URL Slot&quot; to show multiple angles &amp; colors.
+                  </div>
+                ) : (
+                  <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
+                    {editingProduct.images.map((imgUrl, idx) => (
+                      <div
+                        key={idx}
+                        className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-2.5 bg-card border border-border"
+                      >
+                        <div className="w-14 h-14 bg-muted border border-border shrink-0 overflow-hidden relative">
+                          {imgUrl ? (
+                            <img
+                              src={imgUrl}
+                              alt={`Angle ${idx + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-[9px] text-muted-foreground text-center">
+                              No url
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex-1 w-full space-y-1">
+                          <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                            <span>Angle / Color #{idx + 1}</span>
+                            <div className="flex items-center gap-2">
+                              {imgUrl && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    // Swap this image with primary image
+                                    const oldPrimary = editingProduct.image;
+                                    const currentImages = [...(editingProduct.images || [])];
+                                    currentImages[idx] = oldPrimary;
+                                    setEditingProduct({
+                                      ...editingProduct,
+                                      image: imgUrl,
+                                      images: currentImages.filter(Boolean),
+                                    });
+                                    showToast('Set as primary thumbnail');
+                                  }}
+                                  className="text-[10px] text-primary hover:underline font-medium"
+                                  title="Make this the primary cover thumbnail"
+                                >
+                                  Make Primary
+                                </button>
+                              )}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const updated = (editingProduct.images || []).filter((_, i) => i !== idx);
+                                  setEditingProduct({
+                                    ...editingProduct,
+                                    images: updated,
+                                  });
+                                }}
+                                className="text-destructive hover:opacity-80 p-1"
+                                title="Remove this image"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={imgUrl}
+                              onChange={(e) => {
+                                const updated = [...(editingProduct.images || [])];
+                                updated[idx] = e.target.value;
+                                setEditingProduct({ ...editingProduct, images: updated });
+                              }}
+                              placeholder="Image URL or upload from device"
+                              className="w-full bg-background border border-border px-2.5 py-1 text-xs text-foreground focus:border-primary focus:outline-none"
+                            />
+                            <label className="shrink-0 bg-secondary px-2.5 py-1 text-[11px] cursor-pointer hover:bg-secondary/80 flex items-center gap-1 border border-border">
+                              <Upload className="w-3 h-3" />
+                              <span>Upload</span>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) =>
+                                  handleImageUpload(e, (base64) => {
+                                    const updated = [...(editingProduct.images || [])];
+                                    updated[idx] = base64;
+                                    setEditingProduct({ ...editingProduct, images: updated });
+                                  })
+                                }
+                              />
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div>

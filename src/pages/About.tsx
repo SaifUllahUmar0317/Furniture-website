@@ -62,7 +62,7 @@ export default function About() {
                   <div className="text-foreground/50 text-xs uppercase tracking-widest">Years of Experience</div>
               </div>
               <div>
-                <div className="text-primary font-serif text-3xl sm:text-4xl mb-2">500+</div>
+                <div className="text-primary font-serif text-3xl sm:text-4xl mb-2">10k+</div>
                 <div className="text-foreground/50 text-xs uppercase tracking-widest">Homes Furnished</div>
               </div>
             </div>

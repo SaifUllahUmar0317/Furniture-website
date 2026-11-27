@@ -94,6 +94,7 @@ export default async function handler(req: IncomingMessage & { query?: any; body
               price = ${Number(p.price) || 0},
               price_qualifier = ${p.priceQualifier || 'fixed'},
               image = ${p.image || ''},
+              images = ${JSON.stringify(p.images || [])}::jsonb,
               description = ${p.description || ''},
               stock = ${p.stock || 'in-stock'},
               badge = ${p.badge || null},
@@ -104,10 +105,10 @@ export default async function handler(req: IncomingMessage & { query?: any; body
       } else {
         // Insert new
         await sql`
-          INSERT INTO products (slug, name, category, price, price_qualifier, image, description, stock, badge, specs)
+          INSERT INTO products (slug, name, category, price, price_qualifier, image, images, description, stock, badge, specs)
           VALUES (
             ${slug}, ${p.name}, ${p.category || 'General'}, ${Number(p.price) || 0}, ${p.priceQualifier || 'fixed'},
-            ${p.image || ''}, ${p.description || ''}, ${p.stock || 'in-stock'}, ${p.badge || null},
+            ${p.image || ''}, ${JSON.stringify(p.images || [])}::jsonb, ${p.description || ''}, ${p.stock || 'in-stock'}, ${p.badge || null},
             ${JSON.stringify(p.specs || [])}::jsonb
           );
         `;

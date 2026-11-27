@@ -143,6 +143,7 @@ export async function syncFromCloud() {
           price: Number(item.price),
           priceQualifier: item.price_qualifier || item.priceQualifier || 'fixed',
           image: item.image,
+          images: Array.isArray(item.images) ? item.images : [],
           description: item.description,
           stock: item.stock || 'in-stock',
           badge: item.badge,

@@ -88,6 +88,7 @@ export async function ensureSchema() {
         price INTEGER NOT NULL,
         price_qualifier TEXT DEFAULT 'fixed',
         image TEXT NOT NULL,
+        images JSONB DEFAULT '[]'::jsonb,
         description TEXT,
         stock TEXT DEFAULT 'in-stock',
         badge TEXT,
@@ -96,6 +97,11 @@ export async function ensureSchema() {
         updated_at TIMESTAMPTZ DEFAULT NOW()
       );
     `;
+
+    // Ensure images column exists if table was created previously
+    try {
+      await sql`ALTER TABLE products ADD COLUMN IF NOT EXISTS images JSONB DEFAULT '[]'::jsonb;`;
+    } catch {}
 
     // 2. Projects Table
     await sql`
@@ -127,6 +133,16 @@ export async function ensureSchema() {
         username TEXT NOT NULL DEFAULT 'admin',
         password_hash TEXT NOT NULL,
         recovery_key TEXT NOT NULL,
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      );
+    `;
+
+    // 5. User Carts Table (Preserves cart items per customer / admin account)
+    await sql`
+      CREATE TABLE IF NOT EXISTS user_carts (
+        id SERIAL PRIMARY KEY,
+        user_email TEXT UNIQUE NOT NULL,
+        items JSONB DEFAULT '[]'::jsonb,
         updated_at TIMESTAMPTZ DEFAULT NOW()
       );
     `;

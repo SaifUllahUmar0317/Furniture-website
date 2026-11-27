@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useSearch } from 'wouter';
-import { ArrowRight, Search } from 'lucide-react';
+import { useSearch } from 'wouter';
+import { Search } from 'lucide-react';
 import { FadeIn } from '@/components/ui/fade-in';
 import { OrderFormDialog } from '@/components/products/OrderFormDialog';
-import { formatPrice, productCategories, type Product } from '@/data/products';
+import { ProductCard } from '@/components/products/ProductCard';
+import { productCategories, type Product } from '@/data/products';
 import { useLiveProducts } from '@/lib/admin-store';
 
 const CATEGORY_SLUGS: Record<string, string> = {
@@ -116,80 +117,11 @@ export default function Products() {
           <div className="grid grid-cols-1 gap-x-5 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 sm:gap-x-7 sm:gap-y-10">
             {visibleProducts.map((product, index) => (
               <FadeIn key={product.slug} delay={Math.min(index * 0.04, 0.2)}>
-                <article className="group flex h-full flex-col border border-border bg-card transition-colors hover:border-primary/40">
-                  <Link href={`/products/${product.slug}`} className="relative block aspect-[4/3] overflow-hidden bg-muted">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                      loading={index > 2 ? 'lazy' : 'eager'}
-                    />
-                    {product.badge && (
-                      <span className="absolute left-4 top-4 border border-border bg-background/90 px-3 py-1.5 text-[0.65rem] uppercase tracking-widest text-primary backdrop-blur-sm">
-                        {product.badge}
-                      </span>
-                    )}
-                  </Link>
-
-                  <div className="flex flex-1 flex-col p-4 sm:p-5">
-                    <div className="mb-2 flex items-center justify-between gap-3">
-                      <span className="text-xs uppercase tracking-[0.15em] text-primary">{product.category}</span>
-                      <span
-                        className={`text-xs ${
-                          product.stock === 'in-stock' ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-700 dark:text-rose-400'
-                        }`}
-                      >
-                        {product.stock === 'in-stock' ? 'Available' : 'Made to Order'}
-                      </span>
-                    </div>
-
-                    <Link
-                      href={`/products/${product.slug}`}
-                      className="font-serif text-xl sm:text-2xl leading-snug text-foreground transition-colors hover:text-primary min-h-[3.5rem] sm:min-h-[3.75rem] flex items-center line-clamp-2"
-                      title={product.name}
-                    >
-                      {product.name}
-                    </Link>
-
-                    <div className="mt-3 sm:mt-4 grid grid-cols-2 gap-x-4 gap-y-2 border-y border-border py-3 text-xs leading-relaxed min-h-[4.5rem] sm:min-h-[4.75rem] content-start">
-                      {product.specs.slice(0, 2).map((spec) => (
-                        <div key={spec.label} className="min-w-0">
-                          <span className="block uppercase tracking-widest text-muted-foreground truncate">{spec.label}</span>
-                          <span className="mt-1 block text-foreground/80 line-clamp-2">{spec.value}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Bottom Area: mt-auto guarantees prices and buttons align on the exact same horizontal line */}
-                    <div className="mt-auto pt-4 sm:pt-5">
-                      <div className="flex items-end justify-between gap-4">
-                        <div>
-                          <span className="block text-[0.65rem] uppercase tracking-widest text-muted-foreground">
-                            {product.priceQualifier === 'starting' ? 'Starting Price' : 'Price'}
-                          </span>
-                          <span className="mt-1 block text-lg sm:text-xl font-medium text-foreground">
-                            {product.priceQualifier === 'starting' ? 'From ' : ''}
-                            {formatPrice(product.price)}
-                          </span>
-                        </div>
-                        <Link
-                          href={`/products/${product.slug}`}
-                          className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-primary hover:text-foreground shrink-0"
-                        >
-                          View details <ArrowRight size={14} />
-                        </Link>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={() => setOrderProduct(product)}
-                        className="mt-3 sm:mt-4 w-full bg-primary px-5 py-3 sm:py-3.5 text-xs font-medium uppercase tracking-[0.18em] text-primary-foreground transition-colors hover:bg-primary/90"
-                      >
-                        {product.stock === 'in-stock' ? 'Order Now' : 'Request Availability'}
-                      </button>
-                    </div>
-                  </div>
-                </article>
+                <ProductCard
+                  product={product}
+                  index={index}
+                  onOrderNow={(p) => setOrderProduct(p)}
+                />
               </FadeIn>
             ))}
           </div>
